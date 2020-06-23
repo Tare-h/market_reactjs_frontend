@@ -24,7 +24,7 @@ export default class Home extends React.Component {
         ></div>
 
         <div id="privateclub-maincontainer">
-          <div className="row">
+          {/*   <div className="row">
             <div className="col-xs-12 col-sm-12">
               <div className="story-cloud">
                 <a
@@ -218,7 +218,7 @@ export default class Home extends React.Component {
             </div>
             <div className="visible-xs col-xs-12"></div>
           </div>
-          <div className="row clearfix">
+        */}  <div className="row clearfix">
             <div className="col-minor col-xs-12 col-sm-12">
               {
                 this.props.currCategories.map(category =>

@@ -9,9 +9,25 @@ import {
   getToken,
   getLang,
   transToEnglish,
+  get_currency,
   transToArabic,
+  start_search,
+  show_in_Saudi_riyal,
+  show_in_dollar,
+  show_in_Kuwaiti_dinar,
+  getStart_search,
+  is_fetching_fav,
+  is_fetching_orders,
+  is_fetching_cart,
+  start_fetch_cart,
+  start_fetch_orders,
+  start_fetch_fav,
+  end_fetch_cart,
+  end_fetch_orders,
+  end_fetch_fav,
   trans,
   removeUserSession,
+  end_fetch_profile,
 } from "../Utils/Common";
 import $ from "jquery";
 import axios from "axios";
@@ -26,6 +42,11 @@ export default class NavBar extends React.Component {
     this.onMouseOverBtn = this.onMouseOverBtn.bind(this);
     this.onMouseLeaveBtn = this.onMouseLeaveBtn.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.text_search = this.text_search.bind(this);
+    end_fetch_orders();
+    end_fetch_fav();
+    end_fetch_profile();
+    end_fetch_cart();
   }
 
   handleLogout() {
@@ -68,85 +89,115 @@ export default class NavBar extends React.Component {
       };
 
       //if (this.state.is_fav_loaded == false)
-      if (!this.state.isFavloaded)
-        axios
-          .get(
-            apifunctions.api_server_url + "/get_favorits",
-            this.config,
-            this.bodyParameters
-          )
-          .then((response) => {
-            console.table(response);
-            $("#fav_count").attr(
-              "style",
-              "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
-            );
+      if (!this.state.isFavloaded) {
+        $(".loadscr-container").show();
+        //alert("navbar.js");
+        if (!is_fetching_fav()) {
+          start_fetch_fav();
+          axios
+            .get(
+              apifunctions.api_server_url + "/get_favorits",
+              this.config,
+              this.bodyParameters
+            )
+            .then((response) => {
+              console.table(response);
+              $("#fav_count").attr(
+                "style",
+                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+              );
 
-            $("#fav_count").html(response.data.favorite_ads.length);
-            this.setState({
-              Products: response.data.favorite_ads,
-              isFavloaded: true,
+              $("#fav_count").html(response.data.favorite_ads.length);
+              this.setState({
+                Products: response.data.favorite_ads,
+                isFavloaded: true,
+              });
+              $(".loadscr-container").hide();
+              end_fetch_fav();
+            })
+            .catch((error) => {
+              $(".loadscr-container").hide();
+              //  removeUserSession();
+              end_fetch_fav();
             });
-            //setUserSession(response.data.token, response.data.user);
-            //setAuthLoading(false);
-          })
-          .catch((error) => {
-            //  removeUserSession();
-            // setAuthLoading(false);
-          });
-      if (!this.state.isOrderLoaded)
-        axios
-          .get(
-            apifunctions.api_server_url + "/get_orders",
-            this.config,
-            this.bodyParameters
-          )
-          .then((response) => {
-            console.table(response);
+        }
+      }
 
-            $("#myorder_count").attr(
-              "style",
-              "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
-            );
+      if (!this.state.isOrderLoaded) {
+        $(".loadscr-container").show();
+        if (!is_fetching_orders()) {
+          start_fetch_orders();
+          axios
+            .get(
+              apifunctions.api_server_url + "/get_orders",
+              this.config,
+              this.bodyParameters
+            )
+            .then((response) => {
+              console.table(response);
 
-            $("#myorder_count").html(response.data.orders.length);
-            this.setState({
-              isOrderLoaded: true,
+              $("#myorder_count").attr(
+                "style",
+                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+              );
+
+              $("#myorder_count").html(response.data.orders.length);
+              this.setState({
+                isOrderLoaded: true,
+              });
+
+              $(".loadscr-container").hide();
+              //setUserSession(response.data.token, response.data.user);
+              end_fetch_orders();
+            })
+            .catch((error) => {
+              //  removeUserSession();
+              $(".loadscr-container").hide();
+              end_fetch_orders();
             });
-            //setUserSession(response.data.token, response.data.user);
-            //setAuthLoading(false);
-          })
-          .catch((error) => {
-            //  removeUserSession();
-            // setAuthLoading(false);
-          });
+        }
+      }
 
-      if (!this.state.isCartLoaded)
-        axios
-          .get(
-            apifunctions.api_server_url + "/get_cart",
-            this.config,
-            this.bodyParameters
-          )
-          .then((response) => {
-            console.table(response);
-            $("#cart_count").attr(
-              "style",
-              "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
-            );
+      if (!this.state.isCartLoaded) {
+        $(".loadscr-container").show();
+        if (!is_fetching_cart()) {
+          start_fetch_cart();
+          axios
+            .get(
+              apifunctions.api_server_url + "/get_cart",
+              this.config,
+              this.bodyParameters
+            )
+            .then((response) => {
+              console.table(response);
+              $("#cart_count").attr(
+                "style",
+                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+              );
 
-            $("#cart_count").html(response.data.carts.length);
-            this.setState({
-              isCartLoaded: true,
+              $("#cart_count").html(response.data.carts.length);
+              this.setState({
+                isCartLoaded: true,
+              });
+              //setUserSession(response.data.token, response.data.user);
+              $(".loadscr-container").hide();
+              end_fetch_cart();
+            })
+            .catch((error) => {
+              //  removeUserSession();
+              $(".loadscr-container").hide();
+              end_fetch_cart();
             });
-            //setUserSession(response.data.token, response.data.user);
-            //setAuthLoading(false);
-          })
-          .catch((error) => {
-            //  removeUserSession();
-            // setAuthLoading(false);
-          });
+        }
+      }
     }
+  }
+  text_search() {
+    $("#login_dialog").show();
+    // search_on_product
+    start_search();
+    let text_search = document.getElementById("search_on_product").value;
+    this.props.history.push("/search/" + text_search);
   }
   renderCategoriesNav = () => {
     let acategory = this.props.categories.map((campaignCategoryObj) => (
@@ -357,10 +408,11 @@ export default class NavBar extends React.Component {
   render() {
     return (
       <div>
+        {" "}
         <header>
           <div className="container">
             <div className="row mrhpheader clearfix">
-              <div className="col-xxs-7 col-xs-7 col-sm-3 col-md-3 column">
+              <div className="col-xxs-7 col-xs-3 col-sm-3 col-md-3 column">
                 <div className="row no-margin">
                   <div className="visible-767 col-xxs-2 col-xs-2">
                     <button
@@ -404,257 +456,513 @@ export default class NavBar extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xxs-12 col-xs-12 col-sm-12   col-md-6  col-lg-6   ">
-                <div class="row">
-                  {getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/myorder"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/myorder"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
-                          <font style={{ verticalAlign: "inherit" }}>
-                            {trans("طلباتي", "My order")}
-                            <span id="myorder_count">
-                              <div className="mloader">
-                                <div className="bnc bnc1"></div>
-                                <div className="bnc bnc2"></div>
-                                <div className="bnc bnc3"></div>
-                              </div>
-                            </span>
-                          </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
-                        >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
-                  {getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/cart"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
-                          <font style={{ verticalAlign: "inherit" }}>
-                            {trans("السلة", "Cart")}
-                            <span id="cart_count">
-                              <div className="mloader">
-                                <div className="bnc bnc1"></div>
-                                <div className="bnc bnc2"></div>
-                                <div className="bnc bnc3"></div>
-                              </div>
-                            </span>
-                          </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
-                        >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
 
-                  {getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/fav"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
-                          <font style={{ verticalAlign: "inherit" }}>
-                            {trans("المفضلة", "Fav")}
-                            <span id="fav_count">
-                              <div className="mloader">
-                                <div className="bnc bnc1"></div>
-                                <div className="bnc bnc2"></div>
-                                <div className="bnc bnc3"></div>
-                              </div>
-                            </span>
-                          </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+              <div className="col-xxs-5 col-xs-8 col-sm-4 col-sm-push-5 col-md-3 col-md-push-6 column ">
+                <div className="logged_out">
+                  <ul className="account_menu pull-right">
+                    {getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/myorder"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/myorder"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
                         >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
-                  {getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/Profile"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
                           <font style={{ verticalAlign: "inherit" }}>
-                            {trans("معلومات الحساب", "Profile")}
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-truck"
+                                title={trans("طلباتي", "my orders")}
+                              ></i>
+                              <span id="myorder_count">
+                                <div className="mloader">
+                                  <div className="bnc bnc1"></div>
+                                  <div className="bnc bnc2"></div>
+                                  <div className="bnc bnc3"></div>
+                                </div>
+                              </span>
+                            </font>
                           </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+                    {getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/cart"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
                         >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
+                          <font style={{ verticalAlign: "inherit" }}>
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-shopping-cart"
+                                title={trans("سلتي", "my cart")}
+                              ></i>
+                              <span id="cart_count">
+                                <div className="mloader">
+                                  <div className="bnc bnc1"></div>
+                                  <div className="bnc bnc2"></div>
+                                  <div className="bnc bnc3"></div>
+                                </div>
+                              </span>
+                            </font>
+                          </font>
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
 
-                  {getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <input
-                        className="no_submenu js-mn-itm"
-                        type="button"
-                        onClick={this.handleLogout}
-                        value={trans("تسجيل خروج", "Logout")}
-                      />
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
-                  {!getToken() ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/login"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
-                          <font style={{ verticalAlign: "inherit" }}>
-                            {trans("تسجيل الدخول", "login")}
-                          </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                    {getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/fav"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
                         >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
-                  {!getToken() ? (
-                    <div className="col-xxs-4 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <NavLink
-                        to="/signup"
-                        id="ela-sezon-menu-p-"
-                        href="http://malls-online.com/"
-                        data-hover=""
-                        className="no_submenu js-mn-itm"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
                           <font style={{ verticalAlign: "inherit" }}>
-                            {trans("تسجيل جديد", "Signup")}
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-heart"
+                                title={trans("مفضلتي", "my favorite")}
+                              ></i>
+                              <span id="fav_count">
+                                <div className="mloader">
+                                  <div className="bnc bnc1"></div>
+                                  <div className="bnc bnc2"></div>
+                                  <div className="bnc bnc3"></div>
+                                </div>
+                              </span>
+                            </font>
                           </font>
-                        </font>
-                        <span
-                          aria-hidden="true"
-                          className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+                    {getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/profile"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
                         >
-                          <svg
-                            height="15"
-                            role="img"
-                            title="Go"
-                            viewBox="0 0 8 15"
-                            width="8"
-                          ></svg>
-                        </span>
-                      </NavLink>
-                    </div>
-                  ) : (
-                    <span></span>
-                  )}
-                  {!getLang() || getLang() == "ar" ? (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <button
-                        className="no_submenu js-mn-itm"
-                        type="button"
-                        onClick={() => transToArabic()}
-                        value="Logout"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>
-                          <font style={{ verticalAlign: "inherit" }}>EN</font>
-                        </font>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
-                      <button
-                        className="no_submenu js-mn-itm"
-                        type="button"
-                        onClick={() => transToEnglish()}
-                        value="Logout"
-                      >
-                        <font style={{ verticalAlign: "inherit" }}>عربي</font>
-                      </button>
-                    </div>
-                  )}
+                          <font style={{ verticalAlign: "inherit" }}>
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-user"
+                                title={trans("معلومات الحساب", "Profile")}
+                              ></i>
+                            </font>
+                          </font>
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+
+                    {getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <input
+                          className="no_submenu js-mn-itm"
+                          type="button"
+                          onClick={this.handleLogout}
+                          value={trans("تسجيل خروج", "Logout")}
+                        />
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+                    {!getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/login"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
+                        >
+                          <font style={{ verticalAlign: "inherit" }}>
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-sign-in"
+                                title={trans("تسجيل الدخول", "login")}
+                              ></i>
+                            </font>
+                          </font>
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+                    {!getToken() ? (
+                      <li style={{ marginLeft: "7px" }}>
+                        <NavLink
+                          to="/signup"
+                          id="ela-sezon-menu-p-"
+                          href="http://malls-online.com/"
+                          data-hover=""
+                          className="no_submenu js-mn-itm"
+                        >
+                          <font style={{ verticalAlign: "inherit" }}>
+                            <font style={{ verticalAlign: "inherit" }}>
+                              <i
+                                style={{ fontSize: "20px" }}
+                                className="fa fa-user-plus"
+                                title={trans("تسجيل جديد", "Signup")}
+                              ></i>
+                            </font>
+                          </font>
+                          <span
+                            aria-hidden="true"
+                            className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+                          >
+                            <svg
+                              height="15"
+                              role="img"
+                              title="Go"
+                              viewBox="0 0 8 15"
+                              width="8"
+                            ></svg>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      <span></span>
+                    )}
+                  </ul>
                 </div>
               </div>
+              <div className="col-xxs-12 col-xs-12 col-sm-5 col-sm-pull-4 col-md-6 col-md-pull-3 search-column">
+                <div className="row no-margin text-center">
+                  <div className="row no-margin text-center">
+                    {trans(" أختر عملة الموقع", " select currency site")}
+                  </div>
+                  <ul className="site-switcher">
+                    <li>
+                      <font style={{ verticalAlign: "inherit" }}>
+                        <font style={{ verticalAlign: "inherit" }}>
+                          {get_currency() == "dinar" ? (
+                            <label
+                              className="size-item 2xl"
+                              title={trans("دينار كويتي", "Kuwaiti Dinar")}
+                              aria-label="2XL Size"
+                            >
+                              <span
+                                className="size-slt-box"
+                                level="2"
+                                value="44643"
+                                name="2XL"
+                                style={{ cursor: "default" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("دينار كويتي", "Kuwaiti Dinar")}
+                                  </font>
+                                </font>
+                              </span>
+                            </label>
+                          ) : (
+                            <a
+                              id="ela-header-sekme-sezon"
+                              className="switchtabs sw_selected "
+                              href="/"
+                            >
+                              <button
+                                className="no_submenu js-mn-itm"
+                                type="button"
+                                onClick={() => show_in_Kuwaiti_dinar()}
+                                value="Logout"
+                                style={{ width: "100%" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("دينار كويتي", "Kuwaiti Dinar")}
+                                  </font>
+                                </font>
+                              </button>
+                            </a>
+                          )}
+                        </font>
+                      </font>
+                    </li>
+                    <li>
+                      <font style={{ verticalAlign: "inherit" }}>
+                        <font style={{ verticalAlign: "inherit" }}>
+                          {get_currency() == "riyal" ? (
+                            <label
+                              className="size-item 2xl"
+                              title={trans("ريال سعودي", "Saudi Riyal")}
+                              aria-label="2XL Size"
+                            >
+                              <span
+                                className="size-slt-box"
+                                level="2"
+                                value="44643"
+                                name="2XL"
+                                style={{ cursor: "default" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("ريال سعودي", "Saudi Riyal")}
+                                  </font>
+                                </font>
+                              </span>
+                            </label>
+                          ) : (
+                            <a
+                              id="ela-header-sekme-sezon"
+                              className="switchtabs sw_selected "
+                              href="/"
+                            >
+                              <button
+                                className="no_submenu js-mn-itm"
+                                type="button"
+                                onClick={() => show_in_Saudi_riyal()}
+                                value="Logout"
+                                style={{ width: "100%" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("ريال سعودي", "Saudi Riyal")}
+                                  </font>
+                                </font>
+                              </button>
+                            </a>
+                          )}
+                        </font>
+                      </font>
+                    </li>
+                    <li>
+                      <font style={{ verticalAlign: "inherit" }}>
+                        <font style={{ verticalAlign: "inherit" }}>
+                          {!get_currency() || get_currency() == "dollar" ? (
+                            <label
+                              className="size-item 2xl"
+                              title={trans("دولار اميركي", "Dollars")}
+                              aria-label="2XL Size"
+                            >
+                              <span
+                                className="size-slt-box"
+                                level="2"
+                                value="44643"
+                                name="2XL"
+                                style={{ cursor: "default" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("دولار اميركي", "Dollars")}
+                                  </font>
+                                </font>
+                              </span>
+                            </label>
+                          ) : (
+                            <a
+                              id="ela-header-sekme-sezon"
+                              className="switchtabs sw_selected "
+                              href="/"
+                            >
+                              <button
+                                className="no_submenu js-mn-itm"
+                                type="button"
+                                onClick={() => show_in_dollar()}
+                                value="Logout"
+                                style={{ width: "100%" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    {trans("دولار اميركي", "Dollars")}
+                                  </font>
+                                </font>
+                              </button>
+                            </a>
+                          )}
+                        </font>
+                      </font>
+                    </li>
+                    <li>
+                      <a
+                        id="ela-header-sekme-indirim-kulubu"
+                        className="switchtabs "
+                        href="/"
+                      >
+                        <font style={{ verticalAlign: "inherit" }}>
+                          <font style={{ verticalAlign: "inherit" }}>
+                            {!getLang() || getLang() == "ar" ? (
+                              <button
+                                className="no_submenu js-mn-itm"
+                                type="button"
+                                onClick={() => transToArabic()}
+                                value="Logout"
+                                style={{ width: "100%" }}
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  <font style={{ verticalAlign: "inherit" }}>
+                                    English
+                                  </font>
+                                </font>
+                              </button>
+                            ) : (
+                              <button
+                                style={{ width: "100%" }}
+                                className="no_submenu js-mn-itm"
+                                type="button"
+                                onClick={() => transToEnglish()}
+                                value="Logout"
+                              >
+                                <font style={{ verticalAlign: "inherit" }}>
+                                  عربي
+                                </font>
+                              </button>
+                            )}
+                          </font>
+                        </font>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
 
+                <div className="searchbar pull-left">
+                  <span className="search-btn">
+                    <button
+                      id="search"
+                      className="btn btn-search"
+                      onClick={(event) => this.text_search()}
+                      type="button"
+                    >
+                      {trans("بحث", "search")}
+                    </button>
+                  </span>
+                  <span className="search-icon">
+                    <span ariaHidden="true" className="icontype  ui-search-sm">
+                      <svg
+                        className="fill-gray"
+                        height="16"
+                        role="img"
+                        title="Search"
+                        viewBox="0 0 16 16"
+                        width="16"
+                      >
+                        <use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-search-sm"></use>
+                      </svg>
+                    </span>
+                  </span>
+                  <input
+                    type="search"
+                    style={{ textAlign: "center" }}
+                    name="search_on_product"
+                    id="search_on_product"
+                    className="search-input primeWidgetsSearchAutoCompleteWidget"
+                    placeholder={trans("بحث عن منتج ", "product search")}
+                    autocomplete="off"
+                    autocapitalize="none"
+                  />
+                  <div id="pw-search-autocomplete">
+                    <div className="live-search-results text-left z-top">
+                      <div className="autocomplete-suggestions"></div>
+                    </div>
+                  </div>
+                  <input
+                    id="typeahead"
+                    data-isprivatesearch="false"
+                    type="search"
+                    title={trans("بحث", "search")}
+                    className="search-input ui-autocomplete-input ui-autocomplete-loading"
+                    placeholder="Marka, kategori ve ürün ara"
+                    value="Kadin"
+                    autocomplete="off"
+                    style={{ display: "none" }}
+                  />
+                  <span
+                    role="status"
+                    aria-live="polite"
+                    className="ui-helper-hidden-accessible"
+                  ></span>
+                </div>
+                <div className="ui-ac">
+                  <ul
+                    className="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all"
+                    id="ui-id-1"
+                    tabindex="0"
+                    style={{ zIndex: "1", display: "none" }}
+                  ></ul>
+                </div>
+              </div>
               <input
                 type="hidden"
                 name="main_page"
@@ -732,6 +1040,7 @@ export default class NavBar extends React.Component {
                   <div className="col-md-12 column">
                     <div className="navbar yamm js-setnavigation season">
                       <ul
+                        onClick={(event) => this.onMouseClick()}
                         id="main-navigation"
                         className="nav navbar-nav menu-loaded"
                         style={{ display: "block" }}
@@ -772,17 +1081,15 @@ export default class NavBar extends React.Component {
               <div
                 className="offcvs-close js-mn-cls"
                 id="closemenue"
+                style={{ background: "#e8f0fe" }}
                 onClick={(event) => this.onMouseClick()}
               >
                 <span aria-hidden="true" className="icontype ui-close-lg">
-                  <svg
-                    className="fill-white"
-                    height="16"
-                    role="img"
-                    title="Close"
-                    viewBox="0 0 16 16"
-                    width="16"
-                  ></svg>
+                  <i
+                    style={{ fontSize: "20px" }}
+                    className="fa fa-times fa-4"
+                    style={{ fontSize: "43px" }}
+                  ></i>{" "}
                 </span>
               </div>
 

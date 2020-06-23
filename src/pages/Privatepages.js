@@ -1,4 +1,6 @@
 import Products from "../pages/Products";
+import ProductsFav from "../pages/ProductsFav";
+
 import ProductsCarts from "../pages/ProductsCarts";
 import ProductsOrder from "../pages/ProductsOrder";
 import { NavLink } from "react-router-dom";
@@ -8,6 +10,14 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Component, Suspense, useState, useEffect } from "react";
 import axios from 'axios';
 import apifunctions from "../api/apifunctions";
+
+
+
+import Activationaccount from "../pages/Activationaccount";
+import ChangePassword from "../pages/ChangePassword";
+
+
+import Footer from "../components/Footer";
 import {
     getUser,
     getToken,
@@ -25,6 +35,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import $ from "jquery";
+import ResetPassword from "./ResetPassword";
 
 
 
@@ -61,7 +72,9 @@ class Privatepages extends Component {
             };
 
             //if (this.state.is_fav_loaded == false)
-            if (!this.state.isFavloaded)
+            if (!this.state.isFavloaded && false) {
+                $(".loadscr-container").show();
+                alert('privatepages.js');
                 axios
                     .get(
                         apifunctions.api_server_url + "/get_favorits",
@@ -78,14 +91,17 @@ class Privatepages extends Component {
                             isFavloaded: true,
                         });
                         //setUserSession(response.data.token, response.data.user);
-                        //setAuthLoading(false);
+                        $(".loadscr-container").hide();
                     })
                     .catch((error) => {
                         //  removeUserSession();
-                        // setAuthLoading(false);
+                        $(".loadscr-container").hide();
                     });
+            }
 
-            if (!this.state.isOrderLoaded)
+
+            if (!this.state.isOrderLoaded && false) {
+                $(".loadscr-container").show();
                 axios.get(
                     apifunctions.api_server_url + "/get_orders",
                     this.config,
@@ -102,14 +118,17 @@ class Privatepages extends Component {
                             isOrderLoaded: true,
                         });
                         //setUserSession(response.data.token, response.data.user);
-                        //setAuthLoading(false);
+                        $(".loadscr-container").hide();
                     })
                     .catch((error) => {
                         //  removeUserSession();
-                        // setAuthLoading(false);
+                        $(".loadscr-container").hide();
                     });
+            }
 
-            if (!this.state.isCartLoaded)
+
+            if (!this.state.isCartLoaded && false) {
+                $(".loadscr-container").show();
                 axios.get(
                     apifunctions.api_server_url + "/get_cart",
                     this.config,
@@ -125,13 +144,16 @@ class Privatepages extends Component {
 
                             isCartLoaded: true,
                         });
+                        $(".loadscr-container").hide();
                         //setUserSession(response.data.token, response.data.user);
                         //setAuthLoading(false);
                     })
                     .catch((error) => {
                         //  removeUserSession();
-                        // setAuthLoading(false);
+                        $(".loadscr-container").hide();
                     });
+            }
+
         }
     }
     getSurename() {
@@ -193,7 +215,7 @@ class Privatepages extends Component {
         });
     }
     submitUserAfterUpdate(e) {
-        console.log('submitUserAfterUpdate');
+        $(".loadscr-container").show();
         axios.post(apifunctions.api_server_url + '/' + 'editUserProfile'
 
             ,
@@ -209,11 +231,11 @@ class Privatepages extends Component {
 
         ).then(response => {
             setUserSession(getToken(), response.data);
-            console.log(response);
+            $(".loadscr-container").hide();
 
             // this.props.history.push('/profile');
         }).catch(error => {
-            //console.table(error);
+            $(".loadscr-container").hide();
 
             if (error.response.status === 401) {
 
@@ -237,20 +259,20 @@ class Privatepages extends Component {
         this.bodyParameters = {
             key: "value"
         };
-
+        $(".loadscr-container").show();
         axios.get(apifunctions.api_server_url + '/user_profile',
             this.config,
             this.bodyParameters
 
         ).then(response => {
-            console.table(response);
+            $(".loadscr-container").hide();
             this.setState({ user: response.data.user });
 
             //setUserSession(response.data.token, response.data.user);
             //setAuthLoading(false);
         }).catch(error => {
 
-            //  removeUserSession();
+            $(".loadscr-container").hide();
             // setAuthLoading(false);
         });
     }
@@ -270,19 +292,28 @@ class Privatepages extends Component {
 
 
         return (
-            <body class="mrhp_web Malls Online_body ">
+            <body className="mrhp_web Malls Online_body ">
 
+                <div className="loadscr-container" style={{ display: "none" }}>
+                    <div className="loader-container">
+                        <div id="pageloader"><div className="mloader">
+                            <div className="bnc bnc1"></div>
+                            <div className="bnc bnc2"></div>
+                            <div className="bnc bnc3"></div>
+                        </div></div>
+                    </div>
+                </div>
                 <header>
-                    <div class="container">
+                    <div className="container">
 
-                        <div class="row mrhpheader clearfix">
-                            <div class="col-xxs-7 col-xs-7 col-sm-3 col-md-3 column">
-                                <div class="row no-margin">
-                                    <div class="visible-767 col-xxs-2 col-xs-2">
+                        <div className="row mrhpheader clearfix">
+                            <div className="col-xxs-7 col-xs-7 col-sm-3 col-md-3 column">
+                                <div className="row no-margin">
+                                    <div className="visible-767 col-xxs-2 col-xs-2">
 
 
                                     </div>
-                                    <div class="col-xxs-9 col-xs-10 col-sm-10">
+                                    <div className="col-xxs-9 col-xs-10 col-sm-10">
                                         <NavLink
                                             to="/"
                                             id="ela-sezon-menu-p-"
@@ -315,7 +346,7 @@ class Privatepages extends Component {
                             </div>
                             <div
                                 className="col-xxs-12 col-xs-12 col-sm-12   col-md-6  col-lg-6 " >
-                                <div class="row"   >
+                                <div className="row"   >
                                     <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
                                         <NavLink
                                             to="/myorder"
@@ -326,24 +357,22 @@ class Privatepages extends Component {
                                         >
                                             <font style={{ verticalAlign: "inherit" }}>
                                                 <font style={{ verticalAlign: "inherit" }}>
-                                                    {trans("طلباتي", "My order")}   <span
-                                                        id="myorder_count"
-                                                        style={{
-                                                            padding: '5px',
-                                                            borderRadius: "50%",
-                                                            color: "#fff",
-
-                                                        }}
-                                                    >
+                                                    <i
+                                                        style={{ fontSize: "20px" }}
+                                                        className="fa fa-truck"
+                                                        title={trans("طلباتي", "my orders")}
+                                                    ></i>
+                                                    <span id="myorder_count">
                                                         <div className="mloader">
                                                             <div className="bnc bnc1"></div>
                                                             <div className="bnc bnc2"></div>
-                                                            <div className="bnc bnc3"></div></div>
+                                                            <div className="bnc bnc3"></div>
+                                                        </div>
                                                     </span>
                                                 </font>
                                             </font>
                                             <span
-                                                aria-hidden="true"
+                                                ariaHidden="true"
                                                 className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
                                             >
                                                 <svg
@@ -366,24 +395,22 @@ class Privatepages extends Component {
                                         >
                                             <font style={{ verticalAlign: "inherit" }}>
                                                 <font style={{ verticalAlign: "inherit" }}>
-                                                    {trans("السلة", "Cart")}    <span
-                                                        id="cart_count"
-                                                        style={{
-                                                            padding: '5px',
-                                                            borderRadius: "50%",
-                                                            color: "#fff",
-
-                                                        }}
-                                                    >
+                                                    <i
+                                                        style={{ fontSize: "20px" }}
+                                                        className="fa fa-shopping-cart"
+                                                        title={trans("سلتي", "my cart")}
+                                                    ></i>
+                                                    <span id="cart_count">
                                                         <div className="mloader">
                                                             <div className="bnc bnc1"></div>
                                                             <div className="bnc bnc2"></div>
-                                                            <div className="bnc bnc3"></div></div>
+                                                            <div className="bnc bnc3"></div>
+                                                        </div>
                                                     </span>
                                                 </font>
                                             </font>
                                             <span
-                                                aria-hidden="true"
+                                                ariaHidden="true"
                                                 className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
                                             >
                                                 <svg
@@ -406,19 +433,22 @@ class Privatepages extends Component {
                                         >
                                             <font style={{ verticalAlign: "inherit" }}>
                                                 <font style={{ verticalAlign: "inherit" }}>
-                                                    {trans("المفضلة", "Favorite")}      <span
-                                                        id="fav_count"
-
-                                                    >
+                                                    <i
+                                                        style={{ fontSize: "20px" }}
+                                                        className="fa fa-heart"
+                                                        title={trans("مفضلتي", "my favorite")}
+                                                    ></i>
+                                                    <span id="fav_count">
                                                         <div className="mloader">
                                                             <div className="bnc bnc1"></div>
                                                             <div className="bnc bnc2"></div>
-                                                            <div className="bnc bnc3"></div></div>
+                                                            <div className="bnc bnc3"></div>
+                                                        </div>
                                                     </span>
                                                 </font>
                                             </font>
                                             <span
-                                                aria-hidden="true"
+                                                ariaHidden="true"
                                                 className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
                                             >
                                                 <svg
@@ -433,7 +463,7 @@ class Privatepages extends Component {
                                     </div>
                                     <div className="col-xxs-2 col-xs-2 col-sm-4 col-sm-push-2 col-md-2 col-md-push-4 column">
                                         <NavLink
-                                            to="/Profile"
+                                            to="/profile"
                                             id="ela-sezon-menu-p-"
                                             href="http://malls-online.com/"
                                             data-hover=""
@@ -441,11 +471,15 @@ class Privatepages extends Component {
                                         >
                                             <font style={{ verticalAlign: "inherit" }}>
                                                 <font style={{ verticalAlign: "inherit" }}>
-                                                    {trans("معلومات الحساب", "Profile")}
+                                                    <i
+                                                        style={{ fontSize: "20px" }}
+                                                        className="fa fa-user"
+                                                        title={trans("معلومات الحساب", "Profile")}
+                                                    ></i>
                                                 </font>
                                             </font>
                                             <span
-                                                aria-hidden="true"
+                                                ariaHidden="true"
                                                 className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
                                             >
                                                 <svg
@@ -493,9 +527,9 @@ class Privatepages extends Component {
 
                             </div>
 
-                            <div class="col-xxs-12 col-xs-12 col-sm-5 col-sm-pull-4 col-md-6 col-md-pull-3 search-column">
+                            <div className="col-xxs-12 col-xs-12 col-sm-5 col-sm-pull-4 col-md-6 col-md-pull-3 search-column">
 
-                                <div class="ui-ac"><ul class="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style={{ zIndex: 1, display: "none" }}></ul><ul class="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style={{ zIndex: 1, display: "none" }}></ul></div>
+                                <div className="ui-ac"><ul className="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style={{ zIndex: 1, display: "none" }}></ul><ul className="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style={{ zIndex: 1, display: "none" }}></ul></div>
                             </div>
                         </div>
                     </div>
@@ -503,55 +537,16 @@ class Privatepages extends Component {
                 <Switch>
                     <Route path="/myorder" component={ProductsOrder} />
                     <Route path="/cart" component={ProductsCarts} />
-                    <Route path="/fav" component={Products} />
+
+                    <Route path="/activationaccount" component={Activationaccount} />
+                    <Route path="/resetpassword" component={ResetPassword} />
+                    <Route path="/changpassword" component={ChangePassword} />
+
+                    <Route path="/fav" component={ProductsFav} />
                     <Route path="/profile" component={Profile} />
                 </Switch>
-                <footer>
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-xxs-6 col-xs-6 col-sm-3 col-md-2">
-                                <div className="h4">
-                                    <font style={{ verticalAlign: "inherit" }}>
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            Contact us
-                    </font>
-                                    </font>
-                                </div>                </div>
-
-                            <div className="col-xxs-6 col-xs-6 col-sm-3 col-md-offset-1 col-md-2">
-                                <div className="h4">
-                                    <font style={{ verticalAlign: "inherit" }}>
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            I Malls Online.co
-                    </font>
-                                    </font>
-                                </div>           </div>
-
-                            <div className="col-xxs-6 col-xs-6 col-sm-2 col-md-offset-1 col-md-2">
-                                <div className="h4">
-                                    <font style={{ verticalAlign: "inherit" }}>
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            Follow us
-                    </font>
-                                    </font>
-                                </div>         </div>
-
-                            <div className="col-xxs-6 col-xs-6 col-sm-2 col-md-2">
-                                <div className="h4">
-                                    <font style={{ verticalAlign: "inherit" }}>
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            Mobile
-                    </font>
-                                    </font>
-                                </div>   </div>
-
-
-                        </div>
-                    </div>
-                    {/* CONTAINER FOOTER*/}
-                </footer>
-
-            </body>
+                <Footer />
+            </body >
 
         );
     }

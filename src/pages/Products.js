@@ -6,7 +6,9 @@ import ProductItemQuarterWidth from "../components/productitem/ProductItemQuarte
 import { getToken } from '../Utils/Common';
 import {
     getUser,
-
+    start_search,
+    getStart_search,
+    stop_search,
     getLang,
     transToEnglish,
     transToArabic,
@@ -14,6 +16,7 @@ import {
     removeUserSession,
     setUserSession,
 } from '../Utils/Common';
+import $ from "jquery";
 export default class Products extends React.Component {
     state = {
         product_id: ""
@@ -26,93 +29,65 @@ export default class Products extends React.Component {
             Products: [],
             category: {},
             is_fav_loaded: false,
+
         };
 
     }
 
     componentDidUpdate() {
         //window.location.href)
-        if (window.location.pathname == '/fav') {
-            if (getToken()) {
+        if (window.location.href.indexOf("search") > -1) {
+
+            //    alert("/" + getStart_search() + "/");
+            if (getStart_search() == true) {
+                //       alert("after" + getStart_search());
                 this.config = {
                     headers: {
-                        Authorization: 'Bearer ' + getToken(),
+
                         'Content-Type': 'application/json'
 
                     }
                 };
                 this.bodyParameters = {
-                    key: "value"
+                    value: "value"
                 };
-
-                //if (this.state.is_fav_loaded == false)
-                axios.get(apifunctions.api_server_url + '/get_favorits',
+                $(".loadscr-container").show();
+                axios.get(apifunctions.api_server_url + '/api/products_search/' + window.location.href.substring(window.location.href.lastIndexOf('/') + 1),
                     this.config,
                     this.bodyParameters
 
                 ).then(response => {
                     console.table(response);
-                    this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true })
+                    this.setState({ Products: response.data, category: {} })
+                    stop_search();
+                    $(".loadscr-container").hide();
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
                 }).catch(error => {
-
+                    $(".loadscr-container").hide();
                     //  removeUserSession();
                     // setAuthLoading(false);
                 });
+
             }
-            else {
-                this.props.history.push('/');
-            }
-        }
-        else if (window.location.pathname == '/cart') {
-
-            if (getToken()) {
-                this.config = {
-                    headers: {
-                        Authorization: 'Bearer ' + getToken(),
-                        'Content-Type': 'application/json'
-
-                    }
-                };
-                this.bodyParameters = {
-                    key: "value"
-                };
-
-                axios.get(apifunctions.api_server_url + '/get_cart',
-                    this.config,
-                    this.bodyParameters
-
-                ).then(response => {
-                    console.table(response);
-                    // this.setState({ user: response.data.user })
-                    //setUserSession(response.data.token, response.data.user);
-                    //setAuthLoading(false);
-                }).catch(error => {
-
-                    //  removeUserSession();
-                    // setAuthLoading(false);
-                });
-            }
-            else {
-                this.props.history.push('/');
-            }
-
         }
         else {
+
             if (this.state.product_id != window.location.href.substring(window.location.href.lastIndexOf('/') + 1)) {
                 this.setState({
                     product_id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1),
                     Products: [],
                 });
+                $(".loadscr-container").show();
                 axios.get(apifunctions.api_server_url + '/api/products/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1)).then(response => {
                     console.table(response.data.length);
-
-                    this.setState({ Products: response.data })
+                    stop_search();
+                    this.setState({ Products: response.data, category: {} })
+                    $(".loadscr-container").hide();
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
                 }).catch(error => {
-
+                    $(".loadscr-container").hide();
                     //  removeUserSession();
                     // setAuthLoading(false);
                 });   // */
@@ -137,7 +112,7 @@ export default class Products extends React.Component {
 
     }
     componentDidMount() {
-        if (window.location.pathname == '/fav') {
+        if (window.location.pathname == '/fav' && false) {
             if (getToken()) {
                 this.config = {
                     headers: {
@@ -149,20 +124,30 @@ export default class Products extends React.Component {
                 this.bodyParameters = {
                     key: "value"
                 };
-
-                //  if (this.state.is_fav_loaded == false)
+                alert('products.js');
+                $(".loadscr-container").show();
                 axios.get(apifunctions.api_server_url + '/get_favorits',
                     this.config,
                     this.bodyParameters
 
                 ).then(response => {
-                    console.table(response);
-                    // favorite_ads
-                    // this.setState({ user: response.data.user })
+
+
+                    $("#fav_count").attr(
+                        "style",
+                        "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                    );
+
+                    $("#fav_count").html(response.data.favorite_ads.length);
+                    this.setState({
+                        Products: response.data.favorite_ads,
+                        isFavloaded: true,
+                    });
+                    $(".loadscr-container").hide();
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
                 }).catch(error => {
-
+                    $(".loadscr-container").hide();
                     //  removeUserSession();
                     // setAuthLoading(false);
                 });
@@ -205,40 +190,79 @@ export default class Products extends React.Component {
             }
 
         }
-        else {
-            if (this.state.product_id != window.location.href.substring(window.location.href.lastIndexOf('/') + 1)) {
-                this.setState({
-                    product_id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1),
-                    Products: [],
-                });
-                axios.get(apifunctions.api_server_url + '/api/products/' + window.location.href.substring(window.location.href.lastIndexOf('/') + 1)).then(response => {
-                    console.table(response);
+        else
+            if (window.location.href.indexOf("search") > -1) {
+                //alert("/" + getStart_search() + "/");
+                if (getStart_search() == true) {
+                    $(".loadscr-container").show();
 
-                    this.setState({ Products: response.data })
-                    //setUserSession(response.data.token, response.data.user);
-                    //setAuthLoading(false);
-                }).catch(error => {
+                    //    alert("after" + getStart_search());
+                    this.config = {
+                        headers: {
 
-                    //  removeUserSession();
-                    // setAuthLoading(false);
-                });
-                axios.get(apifunctions.api_server_url + '/api/category/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
-                    .then(
-                        response => {
-                            console.table(response);
-                            this.setState({ category: response.data.json, isCartLoaded: false })
+                            'Content-Type': 'application/json'
 
-                            // this.setState({ user: response.data.user })
-                            //setUserSession(response.data.token, response.data.user);
-                            //setAuthLoading(false);
                         }
-                    ).catch(error => {
+                    };
+                    this.bodyParameters = {
+                        value: "value"
+                    };
+                    $(".loadscr-container").show();
+                    axios.get(apifunctions.api_server_url + '/api/products_search/' + window.location.href.substring(window.location.href.lastIndexOf('/') + 1),
+                        this.config,
+                        this.bodyParameters
 
+                    ).then(response => {
+                        $(".loadscr-container").hide();
+                        console.table(response);
+                        this.setState({ Products: response.data })
+                        stop_search();
+
+                        //setUserSession(response.data.token, response.data.user);
+                        //setAuthLoading(false);
+                    }).catch(error => {
+                        $(".loadscr-container").hide();
                         //  removeUserSession();
                         // setAuthLoading(false);
                     });
+                }
+
             }
-        }
+            else {
+                if (this.state.product_id != window.location.href.substring(window.location.href.lastIndexOf('/') + 1)) {
+                    this.setState({
+                        product_id: window.location.href.substring(window.location.href.lastIndexOf('/') + 1),
+                        Products: [],
+                    });
+                    $(".loadscr-container").show();
+                    axios.get(apifunctions.api_server_url + '/api/products/' + window.location.href.substring(window.location.href.lastIndexOf('/') + 1)).then(response => {
+                        console.table(response);
+                        $(".loadscr-container").hide();
+                        this.setState({ Products: response.data })
+                        //setUserSession(response.data.token, response.data.user);
+                        //setAuthLoading(false);
+                    }).catch(error => {
+                        $(".loadscr-container").hide();
+                        //  removeUserSession();
+                        // setAuthLoading(false);
+                    });
+                    axios.get(apifunctions.api_server_url + '/api/category/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
+                        .then(
+                            response => {
+                                console.table(response);
+                                this.setState({ category: response.data.json, isCartLoaded: false })
+
+                                // this.setState({ user: response.data.user })
+                                //setUserSession(response.data.token, response.data.user);
+                                //setAuthLoading(false);
+                            }
+                        ).catch(error => {
+
+                            //  removeUserSession();
+                            // setAuthLoading(false);
+                        });
+                }
+            }
 
     }
 
@@ -273,7 +297,10 @@ export default class Products extends React.Component {
                     <div className="row clearfix ps-timer-row">
                         <div className="col-xs-12 col-sm-6">
                             <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                {trans(this.state.category.category_name_ar, this.state.category.category_name_en)}
+
+                                {this.state.category && this.state.category.category_name_ar ? (
+                                    trans(this.state.category.category_name_ar, this.state.category.category_name_en)) : <span></span>}
+
 
 
                             </font></font></h1>

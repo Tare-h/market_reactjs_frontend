@@ -36,12 +36,16 @@ function App() {
 
 
 
-        <PrivateRoute path="/profile" component={Privatepages} />
-        <PrivateRoute path="/fav" component={Privatepages} />
-        <PrivateRoute path="/cart" component={Privatepages} />
+
+
         <Route path="/Product" extact component={PublicPage} />
         <Route path="/Products" extact component={PublicPage} />
+        <Route path="/search" extact component={PublicPage} />
+        <Route path="/activationaccount" extact component={PublicPage} />
+        <Route path="/resetpassword" extact component={PublicPage} />
+        <Route path="/changpassword" extact component={PublicPage} />
         <Route path="/signup" extact component={PublicPage} />
+        <Route path="/siteinfo" component={PublicPage} />
         <Route path="/" extact component={PublicPage} />
 
       </Switch>

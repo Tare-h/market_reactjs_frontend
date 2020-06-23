@@ -1,3 +1,5 @@
+
+import { NavLink } from "react-router-dom";
 import $ from "jquery";
 import React from 'react'
 import { useLocation } from 'react-router-dom'
@@ -15,6 +17,9 @@ import {
     transToArabic,
     trans,
     removeUserSession,
+    start_fetch_cart,
+    end_fetch_cart,
+    is_fetching_cart,
     setUserSession,
 } from '../Utils/Common';
 export default class ProductsCarts extends React.Component {
@@ -79,7 +84,7 @@ export default class ProductsCarts extends React.Component {
             this.bodyParameters = {
                 key: "value"
             };
-
+            $(".loadscr-container").show();
             axios.get(apifunctions.api_server_url + '/detet_stack_product_from_cart/' + cart_id,
                 this.config,
                 this.bodyParameters
@@ -87,12 +92,12 @@ export default class ProductsCarts extends React.Component {
             ).then(response => {
                 console.table(response);
                 this.setState({ carts: response.data.carts, isCartLoaded: false })
-
+                $(".loadscr-container").hide();
                 // this.setState({ user: response.data.user })
                 //setUserSession(response.data.token, response.data.user);
                 //setAuthLoading(false);
             }).catch(error => {
-
+                $(".loadscr-container").hide();
                 //  removeUserSession();
                 // setAuthLoading(false);
             });
@@ -119,23 +124,28 @@ export default class ProductsCarts extends React.Component {
                     this.bodyParameters = {
                         key: "value"
                     };
+                    $(".loadscr-container").show();
+                    if (!is_fetching_cart()) {
 
-                    axios.get(apifunctions.api_server_url + '/get_cart_details',
-                        this.config,
-                        this.bodyParameters
+                        start_fetch_cart();
+                        axios.get(apifunctions.api_server_url + '/get_cart_details',
+                            this.config,
+                            this.bodyParameters
 
-                    ).then(response => {
-                        console.table(response);
-                        this.setState({ carts: response.data.carts, isCartLoaded: true })
+                        ).then(response => {
+                            console.table(response);
+                            this.setState({ carts: response.data.carts, isCartLoaded: true })
 
-                        // this.setState({ user: response.data.user })
-                        //setUserSession(response.data.token, response.data.user);
-                        //setAuthLoading(false);
-                    }).catch(error => {
+                            $(".loadscr-container").hide();
+                            //setUserSession(response.data.token, response.data.user);
+                            end_fetch_cart();
+                        }).catch(error => {
+                            $(".loadscr-container").hide();
+                            //  removeUserSession();
+                            end_fetch_cart();
+                        });
+                    }
 
-                        //  removeUserSession();
-                        // setAuthLoading(false);
-                    });
                 }
                 else {
                     this.props.history.push('/');
@@ -160,22 +170,27 @@ export default class ProductsCarts extends React.Component {
                     this.bodyParameters = {
                         key: "value"
                     };
+                    $(".loadscr-container").show();
+                    if (!is_fetching_cart()) {
 
-                    axios.get(apifunctions.api_server_url + '/get_cart_details',
-                        this.config,
-                        this.bodyParameters
+                        start_fetch_cart();
+                        axios.get(apifunctions.api_server_url + '/get_cart_details',
+                            this.config,
+                            this.bodyParameters
 
-                    ).then(response => {
-                        console.table(response);
-                        this.setState({ carts: response.data.carts, isCartLoaded: true })
-                        // this.setState({ user: response.data.user })
-                        //setUserSession(response.data.token, response.data.user);
-                        //setAuthLoading(false);
-                    }).catch(error => {
+                        ).then(response => {
+                            console.table(response);
+                            this.setState({ carts: response.data.carts, isCartLoaded: true })
+                            $(".loadscr-container").hide();
+                            //setUserSession(response.data.token, response.data.user);
+                            end_fetch_cart();
+                        }).catch(error => {
+                            $(".loadscr-container").hide();
+                            //  removeUserSession();
+                            end_fetch_cart();
+                        });
+                    }
 
-                        //  removeUserSession();
-                        // setAuthLoading(false);
-                    });
                 }
                 else {
                     this.props.history.push('/');
@@ -191,8 +206,33 @@ export default class ProductsCarts extends React.Component {
             <main className="container push-top" id="home-body-id">
 
 
+                <div className="col-xs-12 col-sm-6">
+                    <ol className="breadcrumb">
+                        <li> <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
 
+                            <NavLink
+                                to="/"
 
+                                href="http://malls-online.com/"
+                                data-hover=""
+                                className="no_submenu js-mn-itm"
+                            >
+                                {trans(
+                                    'الصفحة الرئيسية ',
+                                    '   Home page'
+                                )}
+                            </NavLink>
+                        </font></font> </li>
+
+                        <li className="active"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+
+                            {trans(
+                                'السلة',
+                                ' My Cart'
+                            )}
+                        </font></font></li>
+                    </ol>
+                </div>
 
                 <input id="showrec" value="True" type="hidden" />
 
@@ -211,65 +251,51 @@ export default class ProductsCarts extends React.Component {
 
                     <div id="productSummaryViewContainer" className="productSummaryViewContainer"></div>
 
-                    <div className="row clearfix">
-                        <div className="col-xs-12">
-                            <button type="button"
-                                onClick={(event) => this.buycart()}
-                                className="btn btn-primary btn-lg btn-fullwidth">
-                                <span className="btn-text ladda-label"><font style={{ verticalAlign: 'inherit' }}>
-                                    <font style={{ verticalAlign: 'inherit' }}>
-                                        {trans("اتمام الطلب", " complete order")}      </font></font></span><div className="mloader">
-                                    <div className="bnc bnc1"></div>
-                                    <div className="bnc bnc2"></div>
-                                    <div className="bnc bnc3"></div></div>
-                            </button>
+                    {this.state.carts.length > 0 ? (
+
+                        <div className="row clearfix">
+                            <div className="col-xs-12">
+                                <button type="button"
+                                    onClick={(event) => this.buycart()}
+                                    className="btn btn-primary btn-lg btn-fullwidth">
+                                    <span className="btn-text ladda-label"><font style={{ verticalAlign: 'inherit' }}>
+                                        <font style={{ verticalAlign: 'inherit' }}>
+                                            {trans("اتمام الطلب", " complete order")}      </font></font></span><div className="mloader">
+                                        <div className="bnc bnc1"></div>
+                                        <div className="bnc bnc2"></div>
+                                        <div className="bnc bnc3"></div></div>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+
+                            <div>
+                            </div>
+                        )}
 
                     <div className="row clearfix productnotfound"></div>
                     <div className="row clearfix ps-timer-row">
                         <div className="col-xs-12 col-sm-6">
-                            <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                {trans("سلتك هي ", " Your Cart is")}
-                            </font></font></h1>
-                            <span className="m-product-count visible-xs visible-xxs"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>(264)</font></font></span>
-                        </div>
-                        <div className="col-xs-12 col-sm-6">
+                            {this.state.carts.length > 0 ? (
 
+                                <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                    {trans("سلتك هي ", " Your Cart is")}
+                                </font></font></h1>
+                            ) : (
 
+                                    <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                        {trans("سلتك فارغة ", " Your Cart is")}
+                                    </font></font></h1>
+                                )}
 
                         </div>
-                        <div className="visible-xs visible-sm col-xs-6 col-sm-12">
-                            <button type="button" className="filter-toggle submenutg m-filter-toggle" data-toggle="collapse" data-target=".filter">
-                                <span className="icon-text"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                    filter
-                    </font></font><span id="filter-cnt" className="filter-cnt"></span>
-                                </span>
-                                <span aria-hidden="true" className="icontype  ui-filter">
-                                    <svg className="fill-gray" height="20" role="img" title="Filter" viewBox="0 0 20 20" width="20"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-filter"></use></svg></span>
-                            </button>
-                        </div>
+
                     </div>
 
                     <div className="row clearfix productlist-row">
                         <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 column">
                             <div className="filter filter-collapse collapse" aria-expanded="false">
-                                <div className="visible-xs visible-sm fl-btn-holder">
-                                    <ul>
-                                        <li>
-                                            <button className="btn btn-lg btn-primary fl-control" data-toggle="collapse" data-target=".filter"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>filter</font></font></button>
-                                        </li>
-                                    </ul>
-                                    <hr />
-                                    <ul>
-                                        <li>
-                                            <a id="ela-sezon-filtre-secim-kaldir-ust"
-                                                href="/" className="uncheckall uncheck-master hidden">
-                                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Deselect All</font></font></a>
-                                        </li>
-                                    </ul>
-                                    <hr />
-                                </div>
+
 
                                 <div className="row no-margin">
                                     <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-8">
@@ -894,82 +920,23 @@ export default class ProductsCarts extends React.Component {
                                 </div>
 
                                 <hr />
-                                <ul className="visible-xs visible-sm fl-btn-holder fl-bottom">
-                                    <li>
-                                        <button onclick="applySelectedFilter()" className="btn btn-lg btn-primary fl-control" data-toggle="collapse" data-target=".filter"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>filter</font></font></button>
-                                    </li>
-                                </ul>
+
                             </div>
                         </div>
 
 
 
 
-                        <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 visible-xs">
-                            <div className="single-filter">
-
-                                <ul itemtype="1064" filtertype="0">
-
-                                    <li>
-                                        <div className="tag-filter ">
-                                            <label name="33282" data-modelid="1064" data-id="33282"  >
-                                                <input className="hidden" name="33282" data-cat="1064" type="checkbox" />
-                                                <span  >
-                                                    <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                        Accessory   </font></font><span>
-                                                        <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>16</font></font></span>
-                                                    <font style={{ verticalAlign: 'inherit' }}>
-                                                        <font style={{ verticalAlign: 'inherit' }}>
-                                                        </font></font>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div className="tag-filter ">
-                                            <label name="32820" data-modelid="1064" data-id="32820"  >
-                                                <input className="hidden" name="32820" data-cat="1064" type="checkbox" />
-                                                <span className=""><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                    Scarf ( </font></font><span><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>8</font></font></span>
-                                                    <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}> )
-                            </font></font></span>
-                                            </label>
-                                        </div>
-                                    </li>
-
-                                </ul>
-                            </div>
-                        </div>
 
 
                         <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 column">
                             <div className="content_area">
 
 
-                                <div className="row clearfix hidden">
-                                    <div className="hidden-xxs hidden-xs col-sm-12">
-                                        <div className="product-filter-tags ps-filter-tags">
-                                            <ul id="filter-tags-list" className="list-unstyled no-margin">
-                                                <li className="inline-block-item push-right">
-                                                    <strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Filters</font></font></strong>
-                                                </li>
-                                                <li className="filter-tag-clear-all"><span className="filter-tags-clear"><strong><a href="/kampanya/liste/91150/u-s-polo-assn-" id="tags-clear-all" className="text-muted uncheck-master-tag"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Clear All</font></font></a></strong></span></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
 
 
-                                <div className="row notificationRow" style={{
-                                    display: 'none'
-                                }}>
-                                    <div className="col-xs-12">
-                                        < div className="text-center pad-10 push-bottom-5 push-top-5 white-bg">
-                                            <span aria-hidden="true" className="icontype  ui-giftcard-sm"><svg className="fill-green" height="12" role="img" title="Gift Certificates" viewBox="0 0 12 12" width="12"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-giftcard-sm"></use></svg></span>
-                                            <strong><span className="chequeuNotification bigger push-top text-success"></span></strong>
-                                        </div>
-                                    </div>
-                                </div>
+
+
 
 
                                 <div id="products" className="row">

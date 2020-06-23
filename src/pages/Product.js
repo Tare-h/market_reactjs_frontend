@@ -12,6 +12,7 @@ import {
     transToEnglish,
     transToArabic,
     trans,
+    currency_trans,
     removeUserSession,
     setUserSession,
 } from '../Utils/Common';
@@ -78,6 +79,7 @@ export default class Product extends React.Component {
     addCurrentProducttoFavorit() {
         $(".loadscr-container").show();
         let product_id_in_url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+        $(".loadscr-container").show();
         axios.post(apifunctions.api_server_url + '/add_product_to_favorid/' + product_id_in_url
 
             ,
@@ -105,7 +107,7 @@ export default class Product extends React.Component {
             //  window.location.reload(false);
 
             //  this.props.history.push('/product/' + product_id_in_url);
-            // this.props.history.push('/profile');
+            $(".loadscr-container").hide();
         }).catch(error => {
             //console.table(error);
             $(".loadscr-container").hide();
@@ -115,7 +117,7 @@ export default class Product extends React.Component {
 
                 }
             }
-
+            $(".loadscr-container").hide();
         });
     }
     addCurrentStockProducttocart(one_product_in_stock_id) {
@@ -142,6 +144,7 @@ export default class Product extends React.Component {
             $(".loadscr-container").hide();
             $("#cart_count").html(response.data.cart_count);
             let url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+            $(".loadscr-container").show();
             axios.get(apifunctions.api_server_url + '/api/full_product_details/' + url,
                 this.config,
                 this.bodyParameters
@@ -151,12 +154,13 @@ export default class Product extends React.Component {
                 this.setState({ product: response.data })
                 //setUserSession(response.data.token, response.data.user);
                 //setAuthLoading(false);
+                $(".loadscr-container").hide();
             }).catch(error => {
-
+                $(".loadscr-container").hide();
                 //  removeUserSession();
                 // setAuthLoading(false);
             });
-
+            $(".loadscr-container").hide();
             // this.props.history.push('/profile');
         }).catch(error => {
             //console.table(error);
@@ -215,17 +219,19 @@ export default class Product extends React.Component {
             this.bodyParameters = {
                 key: "value"
             };
+            $(".loadscr-container").show();
             axios.get(apifunctions.api_server_url + '/api/full_product_details/' + url,
                 this.config,
                 this.bodyParameters
             ).then(response => {
                 console.table(response.data.length);
 
-                this.setState({ product: response.data })
+                this.setState({ product: response.data });
+                $(".loadscr-container").hide();
                 //setUserSession(response.data.token, response.data.user);
                 //setAuthLoading(false);
             }).catch(error => {
-
+                $(".loadscr-container").hide();
                 //  removeUserSession();
                 // setAuthLoading(false);
             });   // */
@@ -249,17 +255,18 @@ export default class Product extends React.Component {
             this.bodyParameters = {
                 key: "value"
             };
+            $(".loadscr-container").show();
             axios.get(apifunctions.api_server_url + '/api/full_product_details/' + url
                 ,
                 this.config,
                 this.bodyParameters).then(response => {
                     console.table(response);
-
+                    $(".loadscr-container").hide();
                     this.setState({ product: response.data })
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
                 }).catch(error => {
-
+                    $(".loadscr-container").hide();
                     //  removeUserSession();
                     // setAuthLoading(false);
                 });
@@ -298,7 +305,13 @@ export default class Product extends React.Component {
                                     <font style={{ verticalAlign: 'inherit' }} >×</font>
                                 </font></button>
                             <h4 className="modal-title" id="myModalLabel">
-                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Member login</font></font></h4>
+                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                    {trans(
+                                        'تسجيل دخول',
+                                        'Member login'
+                                    )}
+
+                                </font></font></h4>
                         </div>
 
                         <Login {...this.props} >
@@ -422,7 +435,10 @@ export default class Product extends React.Component {
                                                                     this.state.product.name_ar,
                                                                     this.state.product.name_en
                                                                 )}
-                                                            </font></font><span className="prod-subtitle text-muted"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>T-shirt</font></font></span>
+                                                            </font></font><span className="prod-subtitle text-muted">
+                                                                    <font style={{ verticalAlign: 'inherit' }}>
+
+                                                                    </font></span>
                                                             </h1>
                                                             <a href="/" title="Share Now" className="btn-share visible-xxs">
                                                                 <span ariaHidden="true" className="icontype  ui-share"><svg className="fill-white" height="22" role="img" title="Warning" viewBox="0 0 22 22" width="22"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-share"></use></svg></span>
@@ -441,11 +457,11 @@ export default class Product extends React.Component {
                                                             <div className="col-xs-12">
                                                                 <div className="price-row">
                                                                     <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                        $ {this.state.product.showed_price}
+                                                                        {currency_trans(this.state.product.showed_price)}
                                                                     </font></font></strong></span>
                                                                     <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                        {this.state.product.showed_price + 1}  $
-                                                    </font></font></span>
+                                                                        {currency_trans(this.state.product.showed_price + 1)}
+                                                                    </font></font></span>
                                                                     <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
 
                                                                     {/*<div className="cardinfo ellipses">
@@ -470,8 +486,13 @@ export default class Product extends React.Component {
                                                                     <label for="level1" className="col-xxs-12 col-xs-12 control-label">
                                                                         <font style={{ verticalAlign: 'inherit' }}>
                                                                             <font style={{ verticalAlign: 'inherit' }}>
-                                                                                Color:
-                                            </font></font>
+
+
+                                                                                {trans(
+                                                                                    'اللون',
+                                                                                    ' Color '
+                                                                                )}
+                                                                            </font></font>
                                                                         <span className="pd-color js-singleClr"><font style={{ verticalAlign: 'inherit' }}>
                                                                             <font style={{ verticalAlign: 'inherit' }}>
                                                                                 {trans(
@@ -505,7 +526,12 @@ export default class Product extends React.Component {
                                                                 <div className="form-group pd-size-wrap" id="grpSize">
                                                                     <label for="level2" id="size" className="col-xs-12 control-label">
                                                                         <span className="label-txt"><font style={{ verticalAlign: 'inherit' }}>
-                                                                            <font style={{ verticalAlign: 'inherit' }}>Body size:</font>
+                                                                            <font style={{ verticalAlign: 'inherit' }}>
+                                                                                {trans(
+                                                                                    'المقاس',
+                                                                                    'size'
+                                                                                )} :
+                                                                                  </font>
                                                                         </font>
 
                                                                         </span>
@@ -559,7 +585,12 @@ export default class Product extends React.Component {
                                                                                                                                         <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">
                                                                                                                                             <font style={{ verticalAlign: 'inherit' }}>
                                                                                                                                                 <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                                                                    <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">    PIECE  </label>
+                                                                                                                                                    <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">
+                                                                                                                                                        {trans(
+                                                                                                                                                            'عدد القطع',
+                                                                                                                                                            'PIECE'
+                                                                                                                                                        )}
+                                                                                                                                                    </label>
                                                                                                                                                 </font>
                                                                                                                                             </font>
                                                                                                                                         </label></div> </div>
@@ -673,7 +704,7 @@ export default class Product extends React.Component {
                                                                                                     className="icontype  ui-favourite">
                                                                                                     <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
                                                                                                     <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        {trans('ازالة من السلة', '  remove from  Favorites')}
+                                                                                                        {trans('ازالة من المفضلة', '  remove from  Favorites')}
                                                                                                     </font></font></button>
                                                                                         ) :
                                                                                             <button type="button"
@@ -710,15 +741,18 @@ export default class Product extends React.Component {
 
 
                                                                                             <button type="button"
-                                                                                                onClick={(event) => this.addCurrentProducttoFavorit()}
+                                                                                                onClick={(event) => this.showLoginDialog()}
                                                                                                 className="btn btn-block addfav-link">
                                                                                                 <span ariaHidden="true"
-                                                                                                    onClick={(event) => this.addCurrentProducttoFavorit()}
+                                                                                                    onClick={(event) => this.showLoginDialog()}
                                                                                                     className="icontype  ui-favourite">
                                                                                                     <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
                                                                                                     <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        Add to Favorites
-                                                                                   </font></font></button>
+                                                                                                        {trans(
+                                                                                                            'أضف للمفضلة',
+                                                                                                            ' Add to Favorites'
+                                                                                                        )}
+                                                                                                    </font></font></button>
                                                                                     }
                                                                                 </div>}
                                                                         </div>
@@ -859,7 +893,10 @@ export default class Product extends React.Component {
                                                     <div className="col-xs-12 col-sm-12 col-md-7">
                                                         <h1><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
                                                             {this.state.product.name_ar}
-                                                        </font></font><span className="prod-subtitle text-muted"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>T-shirt</font></font></span>
+                                                        </font></font><span className="prod-subtitle text-muted"><font style={{ verticalAlign: 'inherit' }}>
+
+
+                                                        </font></span>
                                                         </h1>
                                                         <a href="/" title="Share Now" className="btn-share visible-xxs">
                                                             <span ariaHidden="true" className="icontype  ui-share"><svg className="fill-white" height="22" role="img" title="Warning" viewBox="0 0 22 22" width="22"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-share"></use></svg></span>
@@ -878,11 +915,11 @@ export default class Product extends React.Component {
                                                         <div className="col-xs-12">
                                                             <div className="price-row">
                                                                 <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                    $ {this.state.product.showed_price}
+                                                                    {currency_trans(this.state.product.showed_price)}
                                                                 </font></font></strong></span>
                                                                 <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                    {this.state.product.showed_price + 1}  $
-        </font></font></span>
+                                                                    {currency_trans(this.state.product.showed_price + 1)}
+                                                                </font></font></span>
                                                                 <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
 
                                                                 {/*<div className="cardinfo ellipses">
@@ -939,7 +976,12 @@ export default class Product extends React.Component {
                                                             <div className="form-group pd-size-wrap" id="grpSize">
                                                                 <label for="level2" id="size" className="col-xs-12 control-label">
                                                                     <span className="label-txt"><font style={{ verticalAlign: 'inherit' }}>
-                                                                        <font style={{ verticalAlign: 'inherit' }}>Body size:</font>
+                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                            {trans(
+                                                                                'المقاس',
+                                                                                'size'
+                                                                            )} :
+                                                                            </font>
                                                                     </font>
 
                                                                     </span>
@@ -985,7 +1027,12 @@ export default class Product extends React.Component {
                                                                                                                                     <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">
                                                                                                                                         <font style={{ verticalAlign: 'inherit' }}>
                                                                                                                                             <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                                                                <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">    PIECE  </label>
+                                                                                                                                                <label for="amount" className="col-xxs-12 col-xs-12 col-sm-2 control-label">
+                                                                                                                                                    {trans(
+                                                                                                                                                        'عدد القطع',
+                                                                                                                                                        'PIECE'
+                                                                                                                                                    )}
+                                                                                                                                                </label>
                                                                                                                                             </font>
                                                                                                                                         </font>
                                                                                                                                     </label></div> </div>
@@ -1184,56 +1231,93 @@ export default class Product extends React.Component {
                                                                 )}
                                                             </font></font></a></strong>
                                                     </p>
+                                                    <table>
+                                                        <tr>
+                                                            <td>
+                                                                <span className="productdetail-title"><font style={{ verticalAlign: 'inherit' }}>
 
-                                                    <p className="pd-block"><span className="productdetail-title"><font style={{ verticalAlign: 'inherit' }}>
-                                                        <font style={{ verticalAlign: 'inherit' }}>
-                                                            {trans(
-                                                                'اسم المنتج',
-                                                                'Product Name:'
-                                                            )}
-                                                        </font></font></span><font style={{ verticalAlign: 'inherit' }}>
-                                                            <font style={{ verticalAlign: 'inherit' }}>
-                                                                {trans(
-                                                                    this.state.product.name_ar,
-                                                                    this.state.product.name_en
-                                                                )}
+                                                                    <font style={{ verticalAlign: 'inherit' }}>
+                                                                        {trans(
+                                                                            '   اسم المنتج ',
+                                                                            'Product Name '
+                                                                        )}
+                                                                    </font></font></span>
+                                                            </td>
+                                                            <td>
+                                                                :
+                                                            </td>
+                                                            <td>
+                                                                <font style={{ verticalAlign: 'inherit' }}>
+                                                                    <font style={{ verticalAlign: 'inherit' }}>
+                                                                        {trans(
+                                                                            this.state.product.name_ar,
+                                                                            this.state.product.name_en
+                                                                        )}
 
-                                                            </font></font></p><p className="pd-block"><b>
-                                                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                    {trans(
-                                                                        'المواد المصنعة',
-                                                                        'Material:  '
-                                                                    )}
-                                                                </font></font></b><span>
-                                                            <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                {trans(
-                                                                    'قطن     ',
-                                                                    '100% Cotton'
-                                                                )}
-                                                            </font></font></span></p>
-                                                    <p className="pd-block"><b><font style={{ verticalAlign: 'inherit' }}>
-                                                        <font style={{ verticalAlign: 'inherit' }}>
-                                                            {trans(
-                                                                'معلومات',
-                                                                ' Fit / Mold Information:   '
-                                                            )}
+                                                                    </font></font>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <p className="pd-block"></p><p className="pd-block"><b>
+                                                        <table>
+                                                            <tr>
+                                                                <td>
+                                                                    <span className="productdetail-title"><font style={{ verticalAlign: 'inherit' }}>
+                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                            {trans(
+                                                                                'المواد المصنعة',
+                                                                                'Material:  '
+                                                                            )}
+                                                                        </font></font></span>
+                                                                </td>
+                                                                <td>
+                                                                    :
+                                                                </td>
+                                                                <td>
+                                                                    <font style={{ verticalAlign: 'inherit' }}>
+                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                            {trans(
+                                                                                this.state.product.material_ar,
+                                                                                this.state.product.material_en
+                                                                            )}
 
-                                                        </font></font></b><span>
-                                                            <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                {trans(
-                                                                    '  ',
-                                                                    '  '
-                                                                )}
-                                                            </font></font></span></p>
-                                                    <p><span className="productdetail-title"><font style={{ verticalAlign: 'inherit' }}>
-                                                        <font style={{ verticalAlign: 'inherit' }}>
-                                                            {trans(
-                                                                ' تفاصيل المنتج',
-                                                                'Product Detail'
-                                                            )}  :  {trans(
-                                                                this.state.product.note_ar,
-                                                                this.state.product.note_en
-                                                            )} </font></font></span></p>
+                                                                        </font></font>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+
+                                                    </b><span>
+                                                            <table>
+                                                                <tr>
+                                                                    <td>
+                                                                        <span className="productdetail-title"><font style={{ verticalAlign: 'inherit' }}>
+
+                                                                            <font style={{ verticalAlign: 'inherit' }}>
+                                                                                {trans(
+                                                                                    ' تفاصيل المنتج',
+                                                                                    'Product Detail'
+                                                                                )}
+                                                                            </font></font></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        :
+                                                            </td>
+                                                                    <td>
+                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                            <font style={{ verticalAlign: 'inherit' }}>
+                                                                                {trans(
+                                                                                    this.state.product.note_ar,
+                                                                                    this.state.product.note_en
+                                                                                )}
+
+                                                                            </font></font>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+
+                                                        </span></p>
+
+
                                                 </div>
                                             </div>
                                         </div>

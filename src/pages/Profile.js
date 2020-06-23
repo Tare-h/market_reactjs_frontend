@@ -8,7 +8,7 @@ import axios from 'axios';
 import apifunctions from "../api/apifunctions";
 
 import React from 'react';
-
+import $ from "jquery";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -20,6 +20,9 @@ import {
   transToEnglish,
   transToArabic,
   trans,
+  is_fetching_profile,
+  start_fetch_profile,
+  end_fetch_profile,
   removeUserSession,
   setUserSession,
 } from '../Utils/Common';
@@ -98,35 +101,42 @@ class Profile extends Component {
   }
   submitUserAfterUpdate(e) {
     console.log('submitUserAfterUpdate');
-    axios.post(apifunctions.api_server_url + '/' + 'editUserProfile'
+    if (!is_fetching_profile()) {
 
-      ,
-      this.state.user
-      ,
-      {
-        headers: {
-          Authorization: 'Bearer ' + getToken(),
-          'Content-Type': 'application/json'
+      start_fetch_profile();
 
+      $(".loadscr-container").show();
+      axios.post(apifunctions.api_server_url + '/' + 'editUserProfile'
+
+        ,
+        this.state.user
+        ,
+        {
+          headers: {
+            Authorization: 'Bearer ' + getToken(),
+            'Content-Type': 'application/json'
+
+          }
         }
-      }
 
-    ).then(response => {
-      setUserSession(getToken(), response.data);
-      console.log(response);
+      ).then(response => {
+        setUserSession(getToken(), response.data);
+        console.log(response);
+        end_fetch_profile();
+        // this.props.history.push('/profile');
+      }).catch(error => {
+        //console.table(error);
 
-      // this.props.history.push('/profile');
-    }).catch(error => {
-      //console.table(error);
+        if (error.response.status === 401) {
 
-      if (error.response.status === 401) {
+          if (error.response.data.error == "emial already exist") {
 
-        if (error.response.data.error == "emial already exist") {
-
+          }
         }
-      }
+        end_fetch_profile();
+      });
 
-    });
+    }
   }
   componentDidMount() {
 
@@ -173,44 +183,66 @@ class Profile extends Component {
 
     return (
 
-      <main class="container push-top" id="home-body-id">
+      <main className="container push-top" id="home-body-id">
 
 
 
 
-        <div class="row clearfix">
-          <div class="col-xs-12 col-sm-6"><h1><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
-            {trans(
-              'حسابي',
-              ' My Account'
-            )}</font></font></h1></div>
+        <div className="row clearfix">
+          <div className="col-xs-12 col-sm-6">
+            <ol className="breadcrumb">
+              <li> <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+
+                <NavLink
+                  to="/"
+
+                  href="http://malls-online.com/"
+                  data-hover=""
+                  className="no_submenu js-mn-itm"
+                >
+                  {trans(
+                    'الصفحة الرئيسية ',
+                    '   Home page'
+                  )}
+                </NavLink>
+              </font></font> </li>
+
+              <li className="active"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+
+                {trans(
+                  'حسابي',
+                  ' My Account'
+                )}
+              </font></font></li>
+            </ol>
+          </div>
 
         </div>
 
 
-        <div class="row clearfix">
-          <div class="visible-xs visible-sm col-xs-12 col-sm-12 column">
-            <button type="button" class="filter-toggle submenutg" dataToggle="collapse" dataTarget=".sidebar">
-              <span class="icon-text"><font style={{ verticalAlign: "inherit" }}>
+        <div className="row clearfix">
+          <div className="visible-xs visible-sm col-xs-12 col-sm-12 column">
+            <button type="button" className="filter-toggle submenutg" dataToggle="collapse" dataTarget=".sidebar">
+              <span className="icon-text"><font style={{ verticalAlign: "inherit" }}>
                 <font style={{ verticalAlign: "inherit" }}>
                   {trans(
                     'حسابي',
                     ' My Account'
                   )}
                 </font></font></span>
-              <span ariaHidden="true" class="icontype pull-right ui-plus-md">
+              <span ariaHidden="true" className="icontype pull-right ui-plus-md">
                 <svg height="13" role="img" title="Toggle Closed" viewBox="0 0 13 13" width="13">
                   <use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-plus-md"></use></svg></span>
             </button>
-          </div>         <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 column">
+          </div>         <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 column">
 
-            <div class="row inside-form pad-fix">
-              <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12">
+            <div className="row inside-form pad-fix">
+              <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12">
 
-                <div class="account_content">
+                <div className="account_content">
 
-                  <div class="row inside-form pad-fix">
-                    <div class="col-xxs-12 col-xs-6">
+                  <div className="row inside-form pad-fix">
+                    <div className="col-xxs-12 col-xs-6">
 
                       <h2><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                         {trans(
@@ -223,9 +255,9 @@ class Profile extends Component {
 
 
 
-                      <div class="form-group">
-                        <div class="row inside-form">
-                          <div class="col-xxs-12 col-xs-6 special-fix">
+                      <div className="form-group">
+                        <div className="row inside-form">
+                          <div className="col-xxs-12 col-xs-6 special-fix">
                             <label for="FirstName"><font style={{ verticalAlign: "inherit" }}>
                               <font style={{ verticalAlign: "inherit" }}>
                                 {trans(
@@ -233,12 +265,12 @@ class Profile extends Component {
                                   ' Your name*'
                                 )}
                               </font></font></label>
-                            <input type="text" name="name" onChange={this.handleInputChange} value={this.state.user && this.state.user.name} class="form-control" maxlength="50"
+                            <input type="text" name="name" onChange={this.handleInputChange} value={this.state.user && this.state.user.name} className="form-control" maxlength="50"
 
                               ariaRequired="true" />
                           </div>
 
-                          <div class="col-xxs-12 col-xs-6">
+                          <div className="col-xxs-12 col-xs-6">
                             <label for="LastName"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                               {trans(
                                 'النسبة',
@@ -246,43 +278,43 @@ class Profile extends Component {
                               )}
 
                             </font></font></label>
-                            <input type="text" name="surname" onChange={this.handleInputChange} value={this.state.user && this.state.user.surname} class="form-control" maxlength="50"
+                            <input type="text" name="surname" onChange={this.handleInputChange} value={this.state.user && this.state.user.surname} className="form-control" maxlength="50"
 
                               ariaRequired="true" />
                           </div>
                         </div>
                       </div>
-                      <div class="form-group">
-                        <div class="row inside-form">
+                      <div className="form-group">
+                        <div className="row inside-form">
 
-                          <div class="col-xxs-12 col-xs-12">
+                          <div className="col-xxs-12 col-xs-12">
                             <label for="LastName"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                               {trans(
                                 'العنوان',
                                 ' Your address*'
                               )}
                             </font></font></label>
-                            <input type="text" name="address" onChange={this.handleInputChange} value={this.state.user && this.state.user.address} class="form-control" maxlength="50"
+                            <input type="text" name="address" onChange={this.handleInputChange} value={this.state.user && this.state.user.address} className="form-control" maxlength="50"
 
                               ariaRequired="true" />
                           </div>
                         </div>
                       </div>
 
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="Email"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                           {trans(
                             'الأيميل',
                             'E-Mail Address'
                           )}
                         </font></font></label>
-                        <input type="email" name="email" onChange={this.handleInputChange} value={this.state.user && this.state.user.email} maxlength="256" text="E-Posta" class="form-control"
+                        <input type="email" name="email" onChange={this.handleInputChange} value={this.state.user && this.state.user.email} maxlength="256" text="E-Posta" className="form-control"
                           autocomplete="off"
 
                           ariaRequired="true" />
                       </div>
 
-                      <div class="form-group">
+                      <div className="form-group">
                         <label for="MobilePhone"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                           {trans(
                             'رقم الجوال',
@@ -290,21 +322,21 @@ class Profile extends Component {
                           )}
                         </font></font></label>
                         <input type="tel" name="mobile_phone" onChange={this.handleInputChange} value={this.state.user && this.state.user.mobile_phone} value="(545) 434 34 43"
-                          placeholder="(5__) ___ __ __" class="form-control"
+                          placeholder="(5__) ___ __ __" className="form-control"
 
                           ariaRequired="true" maxlength="15" />
                       </div>
 
-                      <div class="form-group">
-                        <div class="row inside-form">
-                          <label for="datetimepicker" class="col-xxs-12 col-xs-12 label-grouped">
+                      <div className="form-group">
+                        <div className="row inside-form">
+                          <label for="datetimepicker" className="col-xxs-12 col-xs-12 label-grouped">
                             <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                               {trans(
                                 'تاريخ ميلادك',
                                 'Your Date of Birth *'
                               )}
                             </font></font></label>
-                          <div class="col-xs-12 colform">
+                          <div className="col-xs-12 colform">
                             <DatePicker className="form-control"
                               value={this.state.user && this.state.user.birthdate}
                               name="birthdate" onChange={this.handleDateChange} onSelect={this.handleDateChange} />
@@ -314,24 +346,24 @@ class Profile extends Component {
                         </div>
                       </div>
 
-                      <div class="form-group">
-                        <label for="GenderID" class="blocklabel label-grouped"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+                      <div className="form-group">
+                        <label for="GenderID" className="blocklabel label-grouped"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                           {trans(
                             'الجنس',
                             'Gender'
                           )}
                         </font></font></label>
-                        <label class="error"><span class="field-validation-valid" data-valmsg-for="GenderID" data-valmsg-replace="true"></span></label>
-                        <label class="radio-inline colform">
-                          <input type="radio" name="gender" onChange={this.handleRadioChange} value="woman" class="radio-form-control" checked={this.state.user && this.state.user.gender === 'woman'}
+                        <label className="error"><span className="field-validation-valid" data-valmsg-for="GenderID" data-valmsg-replace="true"></span></label>
+                        <label className="radio-inline colform">
+                          <input type="radio" name="gender" onChange={this.handleRadioChange} value="woman" className="radio-form-control" checked={this.state.user && this.state.user.gender === 'woman'}
                             ariaRequired="true" /><font style={{ verticalAlign: "inherit" }}>
                             <font style={{ verticalAlign: "inherit" }}>{trans(
                               'انثى',
                               'Woman'
                             )}
                             </font></font></label>
-                        <label class="radio-inline colform">
-                          <input type="radio" name="gender" onChange={this.handleRadioChange} value="male" class="radio-form-control" checked={this.state.user && this.state.user.gender === 'male'} />
+                        <label className="radio-inline colform">
+                          <input type="radio" name="gender" onChange={this.handleRadioChange} value="male" className="radio-form-control" checked={this.state.user && this.state.user.gender === 'male'} />
                           <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>{trans(
                             'ذكر',
                             'Male'
@@ -345,10 +377,10 @@ class Profile extends Component {
                       <input type="hidden" name="SubscribeByMail" id="SubscribeByMail" value="True" ariaHidden="true" />
                       <input type="hidden" name="SubscribeBySMS" id="SubscribeBySMS" value="True" ariaHidden="true" />
 
-                      <div class="row inside-form">
-                        <div class="col-xxs-12 col-xs-12">
-                          <button class="btn btn-primary" data-style="zoom-in" onClick={(event) => this.submitUserAfterUpdate()}>
-                            <span class="btn-text ladda-label"><font style={{ verticalAlign: "inherit" }}>
+                      <div className="row inside-form">
+                        <div className="col-xxs-12 col-xs-12">
+                          <button className="btn btn-primary" data-style="zoom-in" onClick={(event) => this.submitUserAfterUpdate()}>
+                            <span className="btn-text ladda-label"><font style={{ verticalAlign: "inherit" }}>
                               <font style={{ verticalAlign: "inherit" }}>{trans(
                                 'تحديث معلوماتي',
                                 'Update My Information'
@@ -364,36 +396,36 @@ class Profile extends Component {
                 </div>
 
               </div>
-              {/* <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 push-top">
-                  <div class="account_content">
-                    <div class="row inside-form pad-fix">
-                      <div class="col-xxs-12 col-xs-6">
+              {/* <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 push-top">
+                  <div className="account_content">
+                    <div className="row inside-form pad-fix">
+                      <div className="col-xxs-12 col-xs-6">
                         <h2><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Password Update</font></font></h2>
                         <div id="message-container-passwordreminder"></div>
-                        <p id="message-container-light" class="text-muted smaller"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your password can be at least </font></font><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>6</font></font></strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> and at most </font></font><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>20</font></font></strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> characters long.</font></font></p>
+                        <p id="message-container-light" className="text-muted smaller"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your password can be at least </font></font><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>6</font></font></strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> and at most </font></font><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>20</font></font></strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> characters long.</font></font></p>
 
-                        <form action="https://www.morhipo.com/User/ChangePassword" method="post" name="changepasword" id="changepasword" class="bilgiform" novalidate="novalidate" data-error-dir="up" data-focusout="false" data-keyup="false" data-click="false">
-                          <div class="form-group">
+                        <form action="https://www.morhipo.com/User/ChangePassword" method="post" name="changepasword" id="changepasword" className="bilgiform" novalidate="novalidate" data-error-dir="up" data-focusout="false" data-keyup="false" data-click="false">
+                          <div className="form-group">
                             <label for="CurrentPassword"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your Old Password *</font></font></label>
-                            <input autocomplete="off" class="form-control" id="CurrentPassword" maxlength="20"
+                            <input autocomplete="off" className="form-control" id="CurrentPassword" maxlength="20"
                               name="CurrentPassword" type="password"
                               ariaRequired="true" />
                           </div>
-                          <div class="form-group">
+                          <div className="form-group">
                             <label for="NewPassword"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your New Password *</font></font></label>
-                            <input type="password" id="NewPassword" name="NewPassword" maxlength="20" autocomplete="off" class="form-control xss-validate"
+                            <input type="password" id="NewPassword" name="NewPassword" maxlength="20" autocomplete="off" className="form-control xss-validate"
                               placeholder="Your password can be at least 6 and at most 20 characters."
                               ariaRequired="true" />
                           </div>
-                          <div class="form-group">
+                          <div className="form-group">
                             <label for="ReNewPassword"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your New Password (Again) *</font></font></label>
-                            <input autocomplete="off" class="form-control" id="ReNewPassword" maxlength="20" name="ReNewPassword" type="password"
+                            <input autocomplete="off" className="form-control" id="ReNewPassword" maxlength="20" name="ReNewPassword" type="password"
 
                               ariaRequired="true" />
                           </div>
-                          <div class="row inside-form">
-                            <div class="col-xxs-12 col-xs-12">
-                              <button type="submit" id="send-data" class="btn btn-primary"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Update My Password</font></font>
+                          <div className="row inside-form">
+                            <div className="col-xxs-12 col-xs-12">
+                              <button type="submit" id="send-data" className="btn btn-primary"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Update My Password</font></font>
                               </button>
                             </div>
                           </div>
@@ -403,41 +435,41 @@ class Profile extends Component {
                     </div>
                   </div>
                 </div>
-                <div class="col-xxs-12 col-xs-12 col-sm-12 col-md-12 push-top">
+                <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 push-top">
 
-                  <div class="account_content heightfix">
-                    <div class="row inside-form pad-fix">
-                      <div class="bl-cancel col-xxs-12 col-xs-6">
+                  <div className="account_content heightfix">
+                    <div className="row inside-form pad-fix">
+                      <div className="bl-cancel col-xxs-12 col-xs-6">
                         <h2><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Communication Options</font></font></h2>
-                        <div class="notification-container"></div>
+                        <div className="notification-container"></div>
 
                         <form action="#" id="usermailingpermisson"
-                          name="usermailingpermisson" method="post" class="eposta-form"
+                          name="usermailingpermisson" method="post" className="eposta-form"
                           novalidate="novalidate">
-                          <div class="form-group">
-                            <div class="checkbox">
+                          <div className="form-group">
+                            <div className="checkbox">
                               <label>
                                 <input type="checkbox" id="contact-permission-enabler" checked="" /><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
-                                  I consent to the Morhipo privacy policy, the use - processing of my personal data and commercial electronic messages to be sent to me </font></font><a id="ela-iletisim-izinleri-metni" class="tabopener" href="https://www.morhipo.com/User/UserPermissionAgreementControl" dataToggle="modal" dataTarget="#iletisim-modal" data-opentab="0"><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>under the terms stated here</font></font></strong></a><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> .
+                                  I consent to the Morhipo privacy policy, the use - processing of my personal data and commercial electronic messages to be sent to me </font></font><a id="ela-iletisim-izinleri-metni" className="tabopener" href="https://www.morhipo.com/User/UserPermissionAgreementControl" dataToggle="modal" dataTarget="#iletisim-modal" data-opentab="0"><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>under the terms stated here</font></font></strong></a><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> .
                                                 </font></font></label>
-                              <div class="modal fade" id="iletisim-modal" tabindex="-1" role="dialog" aria-labelledby="iletisim-modal" ariaHidden="true">
-                                <div class="modal-dialog">
-                                  <div class="modal-content">
+                              <div className="modal fade" id="iletisim-modal" tabindex="-1" role="dialog" aria-labelledby="iletisim-modal" ariaHidden="true">
+                                <div className="modal-dialog">
+                                  <div className="modal-content">
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div class="form-group">
-                            <div class="form-indent">
-                              <div class="checkbox">
+                          <div className="form-group">
+                            <div className="form-indent">
+                              <div className="checkbox">
                                 <label>
                                   <input checked="checked" dataVal="true" dataValRequired="The SubscribeMailing field is required." id="SubscribeMailing" name="SubscribeMailing" type="checkbox" value="true" />
                                   <input name="SubscribeMailing" type="hidden" value="false" />
                                   <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> I want to be informed about the campaigns by e-newsletter.
                                                     </font></font></label>
                               </div>
-                              <div class="checkbox">
+                              <div className="checkbox">
                                 <label>
                                   <input checked="checked" dataVal="true" dataValRequired="The SubscribeBySMS field is required." id="SubscribeBySms"
                                     name="SubscribeBySms" type="checkbox" value="true" />
@@ -448,22 +480,22 @@ class Profile extends Component {
                               </div>
                             </div>
                           </div>
-                          <div class="form-indent form-group" style={{ display: "none" }} id="phoneNumberInput">
-                            <div class="row inside-form">
-                              <div class="col-xxs-12 col-xs-12">
+                          <div className="form-indent form-group" style={{ display: "none" }} id="phoneNumberInput">
+                            <div className="row inside-form">
+                              <div className="col-xxs-12 col-xs-12">
                                 <div id="phone-number-content">
-                                  <label for="MobilePhoneNumber" class="smaller"><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your phone number</font></font></strong></label>
-                                  <label for="MobilePhoneNumber-error" class="error"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>There is no phone number registered with your membership. </font><font style={{ verticalAlign: "inherit" }}>Please write your phone in the field below.</font></font></label>
+                                  <label for="MobilePhoneNumber" className="smaller"><strong><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Your phone number</font></font></strong></label>
+                                  <label for="MobilePhoneNumber-error" className="error"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>There is no phone number registered with your membership. </font><font style={{ verticalAlign: "inherit" }}>Please write your phone in the field below.</font></font></label>
                                 </div>
                               </div>
-                              <div class="col-xxs-9 col-xs-6 col-sm-6">
+                              <div className="col-xxs-9 col-xs-6 col-sm-6">
                                 <input type="tel" name="MobilePhoneNumber" id="MobilePhoneNumber" value="(545) 434 34 43"
-                                  placeholder="(5__) ___ __ __" class="form-control" />
+                                  placeholder="(5__) ___ __ __" className="form-control" />
                               </div>
                             </div>
                           </div>
 
-                          <button type="submit" class="form-buttonindent btn btn-primary push-bottom-10">
+                          <button type="submit" className="form-buttonindent btn btn-primary push-bottom-10">
                             <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Save</font></font></button>
 
                         </form>
@@ -475,17 +507,17 @@ class Profile extends Component {
              */} </div>
           </div>
 
-          <div id="modalContactAgreement" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modalQuickLogin"></div>
+          <div id="modalContactAgreement" className="modal fade" tabindex="-1" role="dialog">
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modalQuickLogin"></div>
               </div>
             </div>
           </div>
 
-          <div class="modal fade" id="iletisim-modal" tabindex="-1" role="dialog" aria-labelledby="iletisim-modal" ariaHidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
+          <div className="modal fade" id="iletisim-modal" tabindex="-1" role="dialog" aria-labelledby="iletisim-modal" ariaHidden="true">
+            <div className="modal-dialog">
+              <div className="modal-content">
               </div>
             </div>
           </div>

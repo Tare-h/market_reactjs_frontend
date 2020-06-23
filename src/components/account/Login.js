@@ -24,7 +24,19 @@ function Login(props) {
   const [error_password, setError_password] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  let password_is_shown = false;
+  const showHidePassword = () => {
+    if (!password_is_shown) {
+      password_is_shown = true;
+      $("#activation_password").attr("type", "text");
+      //$("#password").attr("type", "password");
+    }
+    else {
+      password_is_shown = false;
+      //$("#activation_password").attr("type", "text");
+      $("#activation_password").attr("type", "password");
+    }
+  }
   const handleLogin = () => {
     formIsValid = true;
 
@@ -168,6 +180,22 @@ function Login(props) {
         <div className="modal-body"  >
 
           <div className="row">
+            <div className="col-md-12 col-xs-12 col-sm-12 col-xs-12 col-lg-12 ">
+              <div className="row half-margin">
+                <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div className="landing-header">
+
+
+
+                    <font style={{ verticalAlign: "inherit" }}>
+                      <font style={{ verticalAlign: "inherit", fontSize: '23px' }}>
+
+                        {trans("  تسجيل دخول ", "Login ")} </font></font>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="col-md-4 col-xs-1 col-sm-1 col-xs-1 "></div>
             <div className="col-md-4 col-xs-10  col-sm-10 col-xs-10 ">
 
@@ -184,14 +212,32 @@ function Login(props) {
               </div>
 
               <div className="col-xs-12 form-group">
-                {error_password && <><small style={{ color: 'red' }}>{error_password}</small><br /></>}
-                <label className="std-font" for="Password">
-                  <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
-                    {trans(" كلمة السر", "Password*")}
 
-                  </font></font></label>
-                <input type="password" {...password} placeholder={trans(" كلمة السر", "Password*")} maxlength="20" autocomplete="off"
-                  className="form-control" ariaRequired="true" />
+
+
+                <div class="hideShowPassword-wrapper"
+                  style={{ position: 'relative', display: 'block', verticalAlign: 'baseline', margin: "0px" }}>
+                  {error_password && <><small style={{ color: 'red' }}>{error_password}</small><br /></>}
+                  <label className="std-font" for="Password">
+                    <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+                      {trans(" كلمة السر", "Password*")}
+
+                    </font></font></label>
+                  <input {...password} placeholder={trans(" كلمة السر", "Password*")} type="password" id="activation_password"
+                    name="Password" maxlength="20" autocomplete="off"
+                    class="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
+                    aria-required="true" style={{ margin: '0px', paddingRight: '66px' }} />
+                  <button type="button" role="button" ariaLabel="Show Password" title="Show Password"
+                    tabindex="0" class="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
+                    aria-pressed="false"
+                    onClick={showHidePassword}
+                    id="activation_showpassword"
+                    style={{ position: 'absolute', right: '0px', bottom: '0px' }}><font style={{ verticalAlign: "inherit" }}>
+                      <font style={{ verticalAlign: "inherit" }}>{trans("اظهار", "Show*")} </font></font>
+                  </button>
+
+                </div>
+
               </div>
 
 
@@ -239,7 +285,7 @@ function Login(props) {
 
             <NavLink
               to="/signup"
-              id="ela-sezon-menu-p-"
+
               href="http://malls-online.com/"
               data-hover=""
               className="no_submenu js-mn-itm"
@@ -247,6 +293,34 @@ function Login(props) {
               <font style={{ verticalAlign: "inherit" }}>
                 <font style={{ verticalAlign: "inherit" }}>
                   {trans("تسجيل جديد", "Signup")}
+                </font>
+              </font>
+              <span
+                aria-hidden="true"
+                className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
+              >
+                <svg
+                  height="15"
+                  role="img"
+                  title="Go"
+                  viewBox="0 0 8 15"
+                  width="8"
+                ></svg>
+              </span>
+            </NavLink>
+          </font></font></p>
+          <p className="text-center std-font"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+
+            <NavLink
+              to="/resetpassword"
+
+              href="http://malls-online.com/"
+              data-hover=""
+              className="no_submenu js-mn-itm"
+            >
+              <font style={{ verticalAlign: "inherit" }}>
+                <font style={{ verticalAlign: "inherit" }}>
+                  {trans(" نسيت كلمة السر..", "Fofrget Password.....")}
                 </font>
               </font>
               <span

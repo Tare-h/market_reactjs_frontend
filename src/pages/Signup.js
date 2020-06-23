@@ -7,6 +7,7 @@ import qs from 'qs'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import NiceInputPassword from 'react-nice-input-password';
+import $ from "jquery";
 import 'react-nice-input-password/dist/react-nice-input-password.css';
 import {
     getUser,
@@ -36,12 +37,23 @@ function Signup(props) {
     const [birthDate, setBirthDate] = useState(new Date());
     const [error_birthDate, setError_birthDate] = useState(null);
 
-
+    let password_is_shown = false;
 
     const [error, setError] = useState(null);
 
     const [loading, setLoading] = useState(false);
-
+    const showHidePassword = () => {
+        if (!password_is_shown) {
+            password_is_shown = true;
+            $("#activation_password").attr("type", "text");
+            //$("#password").attr("type", "password");
+        }
+        else {
+            password_is_shown = false;
+            //$("#activation_password").attr("type", "text");
+            $("#activation_password").attr("type", "password");
+        }
+    }
     // handle button click of login form
     const handleLogin = () => {
         formIsValid = true;
@@ -139,6 +151,7 @@ function Signup(props) {
 
             setError(null);
             setLoading(true);
+            $(".loadscr-container").show();
             axios.post(apifunctions.api_server_url + '/' + 'register_user'
 
                 ,
@@ -163,18 +176,20 @@ function Signup(props) {
                 }
 
             ).then(response => {
+                $(".loadscr-container").hide();
                 setLoading(false);
                 console.log(response);
                 setUserSession(response.data.token, response.data.user);
                 props.history.push('/profile');
             }).catch(error => {
+                $(".loadscr-container").hide();
                 //console.table(error);
                 setLoading(false);
                 if (error.response.status === 401) {
                     setError(error.response.data.error);
                     if (error.response.data.error == "emial already exist") {
-                        setError_surname(trans("الايميل موجود مسبقاً  ", "emial already exist"));
-                        setError_email();
+                        setError_email(trans("الايميل موجود مسبقاً  ", "emial already exist"));
+
                     }
                 }
                 else setError(
@@ -201,42 +216,21 @@ function Signup(props) {
                         <div className="signup-page">
                             <div className="row half-margin">
                                 <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div className="landing-header">
-                                        <a className="inline-block-item" id="ela-signuplogin" href="http://malls-online.com/">
-                                            <NavLink
-                                                to="/"
-                                                id="ela-sezon-menu-p-"
-                                                href="http://malls-online.com/"
-                                                data-hover=""
-                                                className="no_submenu js-mn-itm"
-                                            >
-
-                                                <span
-                                                    aria-hidden="true"
-                                                    className="icontype pull-right visible-xxs visible-xs ui-arrow_right_thin-lg"
-                                                >
-                                                    <svg
-                                                        height="15"
-                                                        role="img"
-                                                        title="Go"
-                                                        viewBox="0 0 8 15"
-                                                        width="8"
-                                                    ></svg>
-                                                </span>
-                                            </NavLink>
+                                    <div className="col-md-12 col-xs-12 col-sm-12 col-xs-12 col-lg-12 ">
+                                        <div className="row half-margin">
+                                            <div className="col-xxs-12 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div className="landing-header">
 
 
-                                        </a>
 
-                                        <ul className="login-tabs" role="tablist" id="login-reg-tabs">
-                                            <li className="active importantlink bigger">
-                                                <a href="#" role="tab" dataoggle="tab">
-                                                    <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Free Membership</font></font></a></li>
-                                            <font style={{ verticalAlign: "inherit" }}>
-                                                <font style={{ verticalAlign: "inherit" }}>
+                                                    <font style={{ verticalAlign: "inherit" }}>
+                                                        <font style={{ verticalAlign: "inherit", fontSize: '23px' }}>
 
-                                                    {trans("انشاء حساب", "Create Account")} </font></font>
-                                        </ul>
+                                                            {trans(" انشاء حساب", "Signup ")} </font></font>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -300,10 +294,23 @@ function Signup(props) {
                                                             <div className="has-input-revealer">
                                                                 <div className="hideShowPassword-wrapper" style={{ position: "relative", display: "block", verticalAlign: "baseline", margin: "0px" }}>
 
-                                                                    <input type="password"  {...password} maxlength="20" autocomplete="off"
-                                                                        className="form-control xss-validate js-pass-reg hideShowPassword-field hideShowPassword-hidden"
-                                                                        placeholder={trans("أدخل كلمة السر", "Your password   *")}
-                                                                        autocapitalize="off" spellcheck="true" />
+                                                                    <div class="hideShowPassword-wrapper"
+                                                                        style={{ position: 'relative', display: 'block', verticalAlign: 'baseline', margin: "0px" }}>
+
+                                                                        <input {...password} placeholder={trans(" كلمة السر", "Password*")} type="password" id="activation_password"
+                                                                            name="Password" maxlength="20" autocomplete="off"
+                                                                            class="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
+                                                                            aria-required="true" style={{ margin: '0px', paddingRight: '66px' }} />
+                                                                        <button type="button" role="button" ariaLabel="Show Password" title="Show Password"
+                                                                            tabindex="0" class="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
+                                                                            aria-pressed="false"
+                                                                            onClick={showHidePassword}
+                                                                            id="activation_showpassword"
+                                                                            style={{ position: 'absolute', right: '0px', bottom: '0px' }}><font style={{ verticalAlign: "inherit" }}>
+                                                                                <font style={{ verticalAlign: "inherit" }}>{trans("اظهار", "Show*")} </font></font>
+                                                                        </button>
+
+                                                                    </div>
 
 
                                                                 </div>
@@ -451,7 +458,7 @@ function Signup(props) {
 
                                                                 {trans("الأيميل", "Email*")}
                                                             </font></font></label>
-                                                            <input type="text" name="Username" id="Username" maxlength="150" text="E-Posta"
+                                                            <input type="text" name="Username" id="Username" maxlength="150"
                                                                 className="form-control" ariaRequired="true" />
                                                         </div>
                                                     </div>

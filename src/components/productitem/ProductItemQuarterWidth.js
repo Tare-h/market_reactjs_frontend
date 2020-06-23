@@ -9,6 +9,7 @@ import {
     transToEnglish,
     transToArabic,
     trans,
+    currency_trans,
     removeUserSession,
 } from "../../Utils/Common";
 export default class ProductItemQuarterWidthexport extends React.Component {
@@ -40,7 +41,7 @@ export default class ProductItemQuarterWidthexport extends React.Component {
 
                         </div>
                         <input type="hidden" className="enhanced-ecommerce-data"
-                            data-productid="23295892" data-productname="U.S. Polo Assn. Tişört|23295892"
+                            data-productid="23295892" data-productname=" "
                             data-itemindex="1" data-category="" data-brand="U.S. Polo Assn." data-gender="" data-dim15="57" data-dim42="4755704" data-dim43="4276300" />
 
                         <a className="js-product" href="/">
@@ -57,16 +58,16 @@ export default class ProductItemQuarterWidthexport extends React.Component {
                                         (productPhoto, index2) => (
                                             index2 == '0' ?
                                                 (
-                                                    <img className="prd-img-top ls-is-cached lazyloaded" id={index2}
+                                                    <img
+
+                                                        id={index2}
                                                         src={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
                                                         srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                        data-srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`} alt="US Polo Assn.  T-Shirt Green" title="US Polo Assn.  T-Shirt Green" />
+                                                        data-srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
+                                                        alt={trans(this.props.product.name_ar, this.props.product.name_en)}
+                                                        title={trans(this.props.product.name_ar, this.props.product.name_en)} />
                                                 ) :
-                                                <img className="prd-img-btm ls-is-cached lazyloaded"
-                                                    src={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                    srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                    data-srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                    alt="US Polo Assn.  T-Shirt Green" title="US Polo Assn.  T-Shirt Green" />
+                                                <span></span>
 
                                         )
                                     )}
@@ -85,14 +86,18 @@ export default class ProductItemQuarterWidthexport extends React.Component {
                                     </font></font></div>
                                     <span className="prd_price ">
                                         <strong>
-                                            <span className="text-danger"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>{this.props.product.showed_price} </font></font></span>
+                                            <span className="text-danger"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                {currency_trans(this.state.product.showed_price)}
+                                            </font></font></span>
                                         </strong>
                                     </span>
                                     <font style={{ verticalAlign: 'inherit' }}>
                                         <span className="act_price text-muted "><s>
-                                            <font style={{ verticalAlign: 'inherit' }}> {this.props.product.showed_price + 1} </font></s></span>
+                                            <font style={{ verticalAlign: 'inherit' }}>
+                                                {currency_trans(this.state.product.showed_price + 1)}
+                                            </font></s></span>
                                         <span className="prd_price "><strong><span className="text-danger">
-                                            <font style={{ verticalAlign: 'inherit' }}>$</font></span></strong></span></font>
+                                        </span></strong></span></font>
 
                                     {/*<  <span className="act_price text-muted "><s><font style={{ verticalAlign: 'inherit' }}>
                                 </font></s></span>

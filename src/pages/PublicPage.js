@@ -5,13 +5,21 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import NavBar from "../pages/NavBar";
 import NotFound from "../pages/NotFound";
 import ProductsOrder from "../pages/ProductsOrder";
+import Activationaccount from "../pages/Activationaccount";
+import ResetPassword from "../pages/ResetPassword";
 import Products from "../pages/Products";
 import Home from "../pages/Home";
+import Footer from "../components/Footer";
 import Product from "../pages/Product";
 import Cart from "../pages/Cart";
 import apifunctions from "../api/apifunctions"
+import ChangePassword from "../pages/ChangePassword";
 import Login from '../components/account/Login';
+import Siteinfo from '../pages/Siteinfo'
 import Signup from './Signup';
+import ProductsFav from "../pages/ProductsFav";
+import Profile from "../pages/Profile"
+import ProductsCarts from "../pages/ProductsCarts";
 export default class PublicPage extends React.Component {
     state = {
         apiCategories: [],
@@ -209,66 +217,30 @@ export default class PublicPage extends React.Component {
                         <Route path="/" exact render={
                             (props) => (<Home {...props} currCategories={this.state.apiCategories} />)
                         } />
-                        <Route path="/cart" component={Cart} />
                         <Route path="/myorder" component={ProductsOrder} />
-
+                        <Route path="/cart" component={ProductsCarts} />
+                        <Route path="/fav" component={ProductsFav} />
+                        <Route path="/profile" component={Profile} />
                         <Route
                             path="/campaigncategory/:name"
                             render={(routerProps) => this.renderCategories(routerProps)}
                         />
 
                         <Route path="/login" component={Login} />
+
+                        <Route path="/activationaccount" component={Activationaccount} />
+                        <Route path="/resetpassword" component={ResetPassword} />
+                        <Route path="/changpassword" component={ChangePassword} />
+
                         <Route path="/signup" component={Signup} />
+                        <Route path="/siteinfo" component={Siteinfo} />
+
                         <Route path="/Products" component={Products} />
+                        <Route path="/search" component={Products} />
                         <Route path="/Product" component={Product} />
                         <Route component={NotFound} />
                     </Switch>
-                    {/*  FOOTER*/}
-                    <footer>
-                        <div className="container">
-                            <div className="row">
-                                <div className="col-xxs-6 col-xs-6 col-sm-3 col-md-2">
-                                    <div className="h4">
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            <font style={{ verticalAlign: "inherit" }}>
-                                                Contact us
-                    </font>
-                                        </font>
-                                    </div>                </div>
-
-                                <div className="col-xxs-6 col-xs-6 col-sm-3 col-md-offset-1 col-md-2">
-                                    <div className="h4">
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            <font style={{ verticalAlign: "inherit" }}>
-                                                I Malls Online.co
-                    </font>
-                                        </font>
-                                    </div>           </div>
-
-                                <div className="col-xxs-6 col-xs-6 col-sm-2 col-md-offset-1 col-md-2">
-                                    <div className="h4">
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            <font style={{ verticalAlign: "inherit" }}>
-                                                Follow us
-                    </font>
-                                        </font>
-                                    </div>         </div>
-
-                                <div className="col-xxs-6 col-xs-6 col-sm-2 col-md-2">
-                                    <div className="h4">
-                                        <font style={{ verticalAlign: "inherit" }}>
-                                            <font style={{ verticalAlign: "inherit" }}>
-                                                Mobile
-                    </font>
-                                        </font>
-                                    </div>   </div>
-
-
-                            </div>
-                        </div>
-                        {/* CONTAINER FOOTER*/}
-                    </footer>
-
+                    <Footer />
 
                 </div>
             </body>

@@ -39,7 +39,7 @@ export default class ProductItem4Cart extends React.Component {
 
                     </div>
                     <input type="hidden" className="enhanced-ecommerce-data"
-                        data-productid="23295892" data-productname="U.S. Polo Assn. Tişört|23295892"
+                        data-productid="23295892" data-productname=" "
                         data-itemindex="1" data-category="" data-brand="U.S. Polo Assn." data-gender="" data-dim15="57" data-dim42="4755704" data-dim43="4276300" />
 
                     <a className="js-product" href="/">
