@@ -15,10 +15,21 @@ import {
     getLang,
     transToEnglish,
     transToArabic,
-    trans,
+    trans, is_fetching_fav,
+    is_fetching_orders,
+    is_fetching_cart,
+    start_fetch_cart,
+    start_fetch_orders,
+    start_fetch_fav,
+    end_fetch_cart,
+    end_fetch_orders,
+    end_fetch_fav,
     removeUserSession,
 } from "../Utils/Common";
 function Signup(props) {
+    $("#login_dialog").hide();
+    $(".loadscr-container").hide();
+
     let formIsValid = true;
     const username = useFormInput('');
     const [error_username, setError_username] = useState(null);
@@ -164,12 +175,13 @@ function Signup(props) {
                     , gender: gender_type
                     , mobile_phone: mobile_phone.value
                     , birthDate: birthDate.getDate() + "-" + (birthDate.getMonth() + 1) + "-" + birthDate.getFullYear()
-
+                    , user: JSON.parse(localStorage.getItem("user"))
                 }
                 ,
+
                 {
                     headers: {
-
+                        Authorization: 'Bearer ' + getToken(),
                         'Content-Type': 'application/json'
 
                     }
@@ -178,9 +190,107 @@ function Signup(props) {
             ).then(response => {
                 $(".loadscr-container").hide();
                 setLoading(false);
-                console.log(response);
+
                 setUserSession(response.data.token, response.data.user);
+                let config = {
+                    headers: {
+                        Authorization: "Bearer " + getToken(),
+                        "Content-Type": "application/json",
+                    },
+                };
+                let bodyParameters = {
+                    key: "value",
+                };
+
+                if (!is_fetching_fav()) {
+                    start_fetch_fav();
+                    $(".loadscr-container").show();
+                    axios
+                        .get(
+                            apifunctions.api_server_url + "/get_favorits",
+                            config,
+                            bodyParameters
+                        )
+                        .then((response) => {
+                            console.table(response);
+                            $("#fav_count").attr(
+                                "style",
+                                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                            );
+
+                            $("#fav_count").html(response.data.favorite_ads.length);
+
+                            $(".loadscr-container").hide();
+                            end_fetch_fav();
+                        })
+                        .catch((error) => {
+                            $(".loadscr-container").hide();
+                            //  removeUserSession();
+                            end_fetch_fav();
+                        });
+                }
+                if (!is_fetching_orders()) {
+                    start_fetch_orders();
+                    //  alert('login start_fetch_orders');
+                    $(".loadscr-container").show();
+                    axios
+                        .get(
+                            apifunctions.api_server_url + "/get_orders",
+                            config,
+                            bodyParameters
+                        )
+                        .then((response) => {
+                            end_fetch_orders();
+                            console.table(response);
+
+                            $("#myorder_count").attr(
+                                "style",
+                                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                            );
+
+                            $("#myorder_count").html(response.data.orders.length);
+
+
+                            $(".loadscr-container").hide();
+                            //setUserSession(response.data.token, response.data.user);
+                            end_fetch_orders();
+                        })
+                        .catch((error) => {
+                            //  removeUserSession();
+                            $(".loadscr-container").hide();
+                            end_fetch_orders();
+                        });
+
+                } if (!is_fetching_cart()) {
+                    start_fetch_cart();
+                    $(".loadscr-container").show();
+                    axios
+                        .get(
+                            apifunctions.api_server_url + "/get_cart",
+                            config,
+                            bodyParameters
+                        )
+                        .then((response) => {
+                            console.table(response);
+                            $("#cart_count").attr(
+                                "style",
+                                "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                            );
+
+                            $("#cart_count").html(response.data.carts.length);
+
+                            //setUserSession(response.data.token, response.data.user);
+                            $(".loadscr-container").hide();
+                            end_fetch_cart();
+                        })
+                        .catch((error) => {
+                            //  removeUserSession();
+                            $(".loadscr-container").hide();
+                            end_fetch_cart();
+                        });
+                }
                 props.history.push('/profile');
+
             }).catch(error => {
                 $(".loadscr-container").hide();
                 //console.table(error);
@@ -204,7 +314,7 @@ function Signup(props) {
 
 
 
-        <body class="morhipo_landing">
+        <body className="morhipo_landing">
             <div className="container">
 
 
@@ -249,25 +359,25 @@ function Signup(props) {
 
 
                                                             {error_username && <><small style={{ color: 'red' }}>{error_username}</small><br /></>}
-                                                            <label for="FirstName"><font style={{ verticalAlign: "inherit" }}>
+                                                            <label htmlFor="FirstName"><font style={{ verticalAlign: "inherit" }}>
                                                                 <font style={{ verticalAlign: "inherit" }}>
 
                                                                     {trans("الأسم*", "Name*")}
                                                                 </font></font></label>
-                                                            <input type="text"   {...username} maxlength="40" text="Ad" className="form-control"
+                                                            <input type="text"   {...username} maxLength="40" text="Ad" className="form-control"
                                                                 placeholder={trans("الأسم*", "Name*")} ariaRequired="true" />
                                                         </div>
                                                         <div className="col-xxs-12 col-xs-6">
 
                                                             {error_surname && <><small style={{ color: 'red' }}>{error_surname}</small><br /></>}
 
-                                                            <label for="LastName">
+                                                            <label htmlFor="LastName">
                                                                 <font style={{ verticalAlign: "inherit" }}>
                                                                     <font style={{ verticalAlign: "inherit" }}>
                                                                         {trans("النسبة*", "Surname*")}
                                                                     </font></font></label>
                                                             <input type="text" {...surname} name="LastName"
-                                                                id="LastName" maxlength="40" text="Soyad"
+                                                                id="LastName" maxLength="40" text="Soyad"
                                                                 className="form-control"
                                                                 placeholder={trans("النسبة*", "Surname*")} ariaRequired="true" />
                                                         </div>
@@ -277,32 +387,32 @@ function Signup(props) {
 
                                                             {error_email && <><small style={{ color: 'red' }}>{error_email}</small><br /></>}
 
-                                                            <label for="EMail"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+                                                            <label htmlFor="EMail"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                                                                 {trans("الايميل", "Email*")}  </font></font></label>
                                                             <input type="email"
-                                                                {...email} maxlength="150" text="E-Posta"
+                                                                {...email} maxLength="150" text="E-Posta"
                                                                 className="form-control" placeholder={trans("أدخل ايميلك", "E-Mail Address *")}
-                                                                autocomplete="off" ariaRequired="true" />
+                                                                autoComplete="off" ariaRequired="true" />
                                                         </div>
                                                     </div>
                                                     <div className="form-group landing-block">
                                                         <div className="col-xs-12">
                                                             {error_password && <><small style={{ color: 'red' }}>{error_password}</small><br /></>}
-                                                            <label for="Password"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+                                                            <label htmlFor="Password"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                                                                 {trans("كلمة سر", "Password*")}
                                                             </font></font></label>
                                                             <div className="has-input-revealer">
                                                                 <div className="hideShowPassword-wrapper" style={{ position: "relative", display: "block", verticalAlign: "baseline", margin: "0px" }}>
 
-                                                                    <div class="hideShowPassword-wrapper"
+                                                                    <div className="hideShowPassword-wrapper"
                                                                         style={{ position: 'relative', display: 'block', verticalAlign: 'baseline', margin: "0px" }}>
 
                                                                         <input {...password} placeholder={trans(" كلمة السر", "Password*")} type="password" id="activation_password"
-                                                                            name="Password" maxlength="20" autocomplete="off"
-                                                                            class="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
+                                                                            name="Password" maxLength="20" autoComplete="off"
+                                                                            className="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
                                                                             aria-required="true" style={{ margin: '0px', paddingRight: '66px' }} />
                                                                         <button type="button" role="button" ariaLabel="Show Password" title="Show Password"
-                                                                            tabindex="0" class="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
+                                                                            tabindex="0" className="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
                                                                             aria-pressed="false"
                                                                             onClick={showHidePassword}
                                                                             id="activation_showpassword"
@@ -335,7 +445,7 @@ function Signup(props) {
                                                     <div className="form-group landing-block">
                                                         <div className="col-xs-12 col-sm-6">
                                                             {error_gender && <><small style={{ color: 'red' }}>{error_gender}</small><br /></>}
-                                                            <label for="GenderID" className="label-grouped">
+                                                            <label htmlFor="GenderID" className="label-grouped">
                                                                 <font style={{ verticalAlign: "inherit" }}>
                                                                     <font style={{ verticalAlign: "inherit" }}>Gender*</font></font></label>
                                                             <label className="colform radio-inline">
@@ -362,7 +472,7 @@ function Signup(props) {
                                                             {error_birthDate && <><small style={{ color: 'red' }}>{error_birthDate}</small><br /></>}
 
 
-                                                            <label for="MobilePhone">
+                                                            <label htmlFor="MobilePhone">
                                                                 <font style={{ verticalAlign: "inherit" }}>
                                                                     <font style={{ verticalAlign: "inherit" }}>
                                                                         {trans(" يوم ميلادك ", "Birth Date*")}
@@ -383,13 +493,13 @@ function Signup(props) {
                                                             {error_mobile_phone && <><small style={{ color: 'red' }}>{error_mobile_phone}</small><br /></>}
 
 
-                                                            <label for="MobilePhone">
+                                                            <label htmlFor="MobilePhone">
                                                                 <font style={{ verticalAlign: "inherit" }}>
                                                                     <font style={{ verticalAlign: "inherit" }}>  {trans("     رقم الهاتف * ", "Mobile phone*")}
                                                                     </font></font>
                                                             </label>
                                                             <input type="tel" {...mobile_phone} placeholder={trans("   رقم الهاتف * ", "Mobile phone*")}
-                                                                className="form-control" ariaRequired="true" maxlength="15" />
+                                                                className="form-control" ariaRequired="true" maxLength="15" />
                                                         </div>
                                                     </div>
 
@@ -453,32 +563,32 @@ function Signup(props) {
 
                                                     <div className="form-group landing-block">
                                                         <div className="col-xs-12">
-                                                            <label for="Username"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
+                                                            <label htmlFor="Username"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
 
 
                                                                 {trans("الأيميل", "Email*")}
                                                             </font></font></label>
-                                                            <input type="text" name="Username" id="Username" maxlength="150"
+                                                            <input type="text" name="Username" id="Username" maxLength="150"
                                                                 className="form-control" ariaRequired="true" />
                                                         </div>
                                                     </div>
                                                     <div className="form-group landing-block">
                                                         <div className="col-xs-12">
-                                                            <label for="Password"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Password*</font></font></label>
+                                                            <label htmlFor="Password"><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Password*</font></font></label>
                                                             <div className="has-input-revealer">
                                                                 <div className="hideShowPassword-wrapper"
                                                                     style={{ position: "relative", display: "block", verticalAlign: "baseline", margin: "0px" }}>
 
-                                                                    <input type="password" name="Password" id="Password" maxlength="20"
-                                                                        autocomplete="off" text="Şifre" className="form-control js-landing-login hideShowPassword-field"
+                                                                    <input type="password" name="Password" id="Password" maxLength="20"
+                                                                        autoComplete="off" text="Şifre" className="form-control js-landing-login hideShowPassword-field"
                                                                         ariaRequired="true" style={{ margin: "0px", paddingRight: "0px" }} />
                                                                     <button type="button" role="button" ariaLabel="Show Password"
                                                                         title="Show Password" tabindex="0"
                                                                         className="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
-                                                                        ariaPressed="false" style={{ position: "absolute", right: "0px" }}>Göster</button></div>
+                                                                        style={{ position: "absolute", right: "0px" }}>Göster</button></div>
                                                                 <button type="button" role="button" ariaLabel="Show Password"
                                                                     title="Show Password" tabindex="0"
-                                                                    className="btn btn- link btn-revealer smaller hideShowPassword-toggle-show" ariaPressed="false"
+                                                                    className="btn btn- link btn-revealer smaller hideShowPassword-toggle-show"
                                                                     style={{ position: "absolute", right: "0px" }}><font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>Show</font></font></button></div>
 
                                                         </div>
@@ -494,7 +604,7 @@ function Signup(props) {
                                                                         <font style={{ verticalAlign: "inherit" }}>
                                                                             {trans(" تسجيل دخول", "Login")}
                                                                         </font></font></span>
-                                                                <div className="mloader" ariaHidden="true">
+                                                                <div className="mloader" aria-hidden="true">
                                                                     <div className="bnc bnc1"></div>
                                                                     <div className="bnc bnc2"></div>
                                                                     <div className="bnc bnc3"></div></div></button>
@@ -655,7 +765,7 @@ function Signup(props) {
                     <div className="goog - te - spinner - pos">< div className="goog - te - spinner - animation"><svg xmlns="http://www.w3.org/2000/svg" className="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle className="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div><div id="fb-root" className=" fb_reset fb_reset"><div style={{
                         position: "absolute", top: "-10000px", width: "0px", height: "0px"
                     }}> <div></div></div >
-                        <div style={{ position: "absolute", top: "-10000px", width: "0px", height: "0px" }} ><div></div></ div ></div > <div data-id="KAWCGQ3169ESE"><div className="smartphoto" ariaHidden="true" role="dialog">
+                        <div style={{ position: "absolute", top: "-10000px", width: "0px", height: "0px" }} ><div></div></ div ></div > <div data-id="KAWCGQ3169ESE"><div className="smartphoto" aria-hidden="true" role="dialog">
                             <div className="smartphoto-body">
                                 < div className="smartphoto-inner">
                                     <div className="smartphoto-header">
@@ -668,8 +778,8 @@ function Signup(props) {
                                     <ul className="smartphoto - list">
                                     </ul>
                                     <ul className="smartphoto-arrows">
-                                        <li className="smartphoto-arrow-left" ariaHidden="true"><a href="#" dataActionClick="gotoSlide()" role="button"><span className="smartphoto-sr-only">go to the previous image</span></a></li>
-                                        <li className="smartphoto-arrow-right" ariaHidden="true"><a href="#" dataActionClick="gotoSlide()" role="button"><span className="smartphoto-sr-only">go to the next image</span></a></li>
+                                        <li className="smartphoto-arrow-left" aria-hidden="true"><a href="#" dataActionClick="gotoSlide()" role="button"><span className="smartphoto-sr-only">go to the previous image</span></a></li>
+                                        <li className="smartphoto-arrow-right" aria-hidden="true"><a href="#" dataActionClick="gotoSlide()" role="button"><span className="smartphoto-sr-only">go to the next image</span></a></li>
                                     </ul>
                                 </div>
                             </div>

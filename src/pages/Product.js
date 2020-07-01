@@ -12,7 +12,7 @@ import {
     transToEnglish,
     transToArabic,
     trans,
-    currency_trans,
+    currency_trans, currency_transing, calc_discount,
     removeUserSession,
     setUserSession,
 } from '../Utils/Common';
@@ -29,6 +29,11 @@ export default class Product extends React.Component {
         this.showLoginDialog = this.showLoginDialog.bind(this);
         this.closeLoginDialog = this.closeLoginDialog.bind(this);
         this.onClickSmallImgBtn = this.onClickSmallImgBtn.bind(this);
+        this.imageZoom = this.imageZoom.bind(this);
+        this.imageonMouseOutDiventEntred = this.imageonMouseOutDiventEntred.bind(this);
+
+        this.imageonMouseOut = this.imageonMouseOut.bind(this);
+        this.imageonMouseOutDiventOuted = this.imageonMouseOutDiventOuted.bind(this);
         this.addCurrentProducttoFavorit = this.addCurrentProducttoFavorit.bind(this);
         this.removeCurrentProducttoFavorit = this.removeCurrentProducttoFavorit.bind(this);
 
@@ -77,7 +82,7 @@ export default class Product extends React.Component {
         });
     }
     addCurrentProducttoFavorit() {
-        $(".loadscr-container").show();
+
         let product_id_in_url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
         $(".loadscr-container").show();
         axios.post(apifunctions.api_server_url + '/add_product_to_favorid/' + product_id_in_url
@@ -192,9 +197,42 @@ export default class Product extends React.Component {
         }
 
     }
+    imageZoom(e, current_src, targetimg_id, previwimg_id) {
+        $('#' + previwimg_id).show();
+        //    alert(previwimg_id);
+        // Getting ref to JQuery object from our parent app.
+        //  var myImg = document.querySelector("#" + targetimg_id);
+        //   var realWidth = myImg.naturalWidth;
+        //    var realHeight = myImg.naturalHeight;
+        $('#' + previwimg_id).width(300);
+        $('#' + previwimg_id).height(400);
+
+        // e && e.preventDefault();
+        // window.zoomme(e);
+        //  window.imageZoom('bigimag1570', 'myresult1570');
+        // window. m.attach({thumb: '#thumb'});
+        // alert(targetimg_id);
+        window.m.attach({
+            thumb: '#' + targetimg_id,
+            large: current_src,
+            mode: 'outside',
+            zoom: 2,
+            zoomable: true
+        });
+    }
+    imageonMouseOut(e, current_src, targetimg_id, previwimg_id) {
+        $('#' + previwimg_id).hide();
+    }
+    imageonMouseOutDiventEntred(e, current_src, targetimg_id, previwimg_id) {
+        $('#' + previwimg_id).hide();
+    }
+    imageonMouseOutDiventOuted(e, current_src, targetimg_id, previwimg_id) {
+        //   $('#' + previwimg_id).show();
+    }
+
     onClickSmallImgBtn(current_src, targetimg_id) {
         // Getting ref to JQuery object from our parent app.
-
+        console.log('targetimg_id =  ' + targetimg_id + ' ,current_src = ' + current_src);
 
         $('#' + targetimg_id).attr('src', current_src);
 
@@ -296,40 +334,16 @@ export default class Product extends React.Component {
 
                 </div>
 
-                <div className="modal fade in " id="login_dialog" tabindex="-1" role="dialog" aria-labelledby="share-modal" ariaHidden="true">
-                    <div className="login-modal" style={{ backgroundColor: "white" }}>
-                        <div className="modal-header">
-                            <button type="button" className="close"
-                                onClick={(event) => this.closeLoginDialog()} dataDismiss="modal" ariaHidden="true">
-                                <font style={{ verticalAlign: 'inherit' }}>
-                                    <font style={{ verticalAlign: 'inherit' }} >×</font>
-                                </font></button>
-                            <h4 className="modal-title" id="myModalLabel">
-                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                    {trans(
-                                        'تسجيل دخول',
-                                        'Member login'
-                                    )}
-
-                                </font></font></h4>
-                        </div>
-
-                        <Login {...this.props} >
-                            {this.props}
-                        </Login>
-                    </div>
-
-                </div>
 
 
                 {
                     this.state.product &&
                     this.state.product.photo_by_color &&
                     this.state.product.photo_by_color.map(
-                        (photo_by_color, index2) => (
-                            index2 == '0' ?
+                        (photo_by_color, indexbig) => (
+                            indexbig == '0' ?
                                 (
-                                    <div className="row clearfix" id={`${'photo_by_color' + photo_by_color.id}`}   >
+                                    <div className="row clearfix" id={`${'photo_by_color' + photo_by_color.id}`}    >
                                         <div className="col-600-12 col-xs-5 col-sm-6 col-md-5 col-lg-6">
 
                                             <div id="product-detail-image-con">
@@ -350,7 +364,7 @@ export default class Product extends React.Component {
                                                                                 onClick={(event) => this.onClickSmallImgBtn(
                                                                                     `${apifunctions.api_server_url + '/' + photo.product_photo_path}`
                                                                                     ,
-                                                                                    'bigimag' + photo_by_color.id + index2)}
+                                                                                    'bigimag' + photo_by_color.id + indexbig)}
                                                                                 alt={trans(
                                                                                     this.state.product.name_ar,
                                                                                     this.state.product.name_en
@@ -381,26 +395,43 @@ export default class Product extends React.Component {
                                                                     (photo, index22) => (
                                                                         index22 == '0' ?
                                                                             (
-                                                                                <li className="is-ready">
+                                                                                <li className="is-ready"  >
                                                                                     <span
-                                                                                        className="js-smartphoto" data-id="0" data-group="1" data-index="0">
-                                                                                        <img itemprop="image" className="lazy" id={`${'bigimag' + photo_by_color.id + index2}`}
-                                                                                            alt={trans(
-                                                                                                this.state.product.name_ar,
-                                                                                                this.state.product.name_en
-                                                                                            )}
+                                                                                        className="js-smartphoto" data-id="0" dataGroup="1" dataIndex="0">
+                                                                                        <div class="img-zoom-container">
+                                                                                            <div>
+                                                                                                <img
 
-                                                                                            title={trans(
-                                                                                                this.state.product.name_ar,
-                                                                                                this.state.product.name_en
-                                                                                            )}
-                                                                                            src={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`} />
+
+                                                                                                    id={`${'bigimag' + photo_by_color.id + indexbig}`}
+                                                                                                    alt={trans(
+                                                                                                        this.state.product.name_ar,
+                                                                                                        this.state.product.name_en
+                                                                                                    )}
+
+                                                                                                    title={trans(
+                                                                                                        this.state.product.name_ar,
+                                                                                                        this.state.product.name_en
+                                                                                                    )}
+                                                                                                    src={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`}
+                                                                                                    data-large-img-url={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`}
+                                                                                                    data-large-img-wrapper={`${'preview' + photo_by_color.id + indexbig}`} />
+
+
+                                                                                            </div>
+
+
+                                                                                        </div>
                                                                                     </span>
+
+
                                                                                 </li>
                                                                             ) :
                                                                             <li>
                                                                                 <a href={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`} className="js-smartphoto hidden" data-id="1" data-group="1" data-index="1">
                                                                                     <img itemprop="image" className="lazy"
+
+
                                                                                         data-src={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`} alt={trans(
                                                                                             this.state.product.name_ar,
                                                                                             this.state.product.name_en
@@ -409,6 +440,7 @@ export default class Product extends React.Component {
                                                                                             this.state.product.name_en
                                                                                         )} />
                                                                                 </a>
+
                                                                             </li>
                                                                     )
                                                                 )}
@@ -424,7 +456,9 @@ export default class Product extends React.Component {
                                         </div>
 
 
-                                        <div className="col-600-12 col-xs-7 col-sm-6 col-md-7 col-lg-6">
+                                        <div className="col-600-12 col-xs-7 col-sm-6 col-md-7 col-lg-6"
+
+                                        >
                                             <div className="product-detail-container">
                                                 <div className="prod-detail-header">
                                                     <input type="hidden" id="selectedQuantity" name="selectedQuantity" value="0" />
@@ -457,10 +491,15 @@ export default class Product extends React.Component {
                                                             <div className="col-xs-12">
                                                                 <div className="price-row">
                                                                     <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                        {currency_trans(this.state.product.showed_price)}
+
+                                                                        {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+                                                                        <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
+
                                                                     </font></font></strong></span>
                                                                     <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                        {currency_trans(this.state.product.showed_price + 1)}
+
+                                                                        {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+
                                                                     </font></font></span>
                                                                     <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
 
@@ -509,7 +548,7 @@ export default class Product extends React.Component {
                                                                                         this.state.product &&
                                                                                         this.state.product.photo_by_color &&
                                                                                         this.state.product.photo_by_color.map(
-                                                                                            (photo_by_colo1r, index2) => (
+                                                                                            (photo_by_colo1r, indexbig) => (
                                                                                                 <img
                                                                                                     onClick={(event) => this.onClickBtn('photo_by_color' + photo_by_colo1r.id, 'photo_by_color' + photo_by_color.id)}
 
@@ -548,7 +587,7 @@ export default class Product extends React.Component {
                                                                                     {
                                                                                         photo_by_color.all_product_in_stock &&
                                                                                         photo_by_color.all_product_in_stock.map(
-                                                                                            (one_product_in_stock, index2) => (
+                                                                                            (one_product_in_stock, indexbig) => (
 
                                                                                                 <span> {
                                                                                                     one_product_in_stock.features &&
@@ -759,42 +798,13 @@ export default class Product extends React.Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {/*  
-                                                             <div className="hidden-buydetails" id="product-deliveryinfo" style={{ display: 'block' }}>
-                                                                <div className="row">
-                                                                    <div className="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8">
-                                                                        <div className="delivery-date text-center"><strong>
-                                                                            <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Estimated Delivery Date&nbsp;</font></font></strong>
-                                                                            <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}> May 18 - June 06</font></font>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                                        </div> 
-                                                               */}
+
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             </div>
 
-                                            {/* 
-                                                <div className="loyalty-promoter">
-                                                    <div className="loyalty-promoter-inner">
-                                                        <span   className="icontype  ui-m-logo-new">
-                                                            <svg className="fill-purple push-right" height="24" role="img" title="Morpass" viewBox="0 0 24 24" width="24">
-                                                                <use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-m-logo-new"></use>
-                                                                </svg>
-                                                        </span>
-
-
-
-                                                        <span className="morpass-notify" data-tier="none">
-                                                            <span><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>With Morpass</font></font></strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}> , 150 TL and Over </font><strong><font style={{ verticalAlign: 'inherit' }}>Cargo</font></strong><font style={{ verticalAlign: 'inherit' }}> is Free! </font></font><a href="/morpass" className="importantlink"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Become a Morpass!</font></font></a></span>
-                                                        </span>
-
-                                                    </div>  
-                                                </div>
-                                            */}
 
                                         </div>
 
@@ -825,7 +835,7 @@ export default class Product extends React.Component {
                                                                             onClick={(event) => this.onClickSmallImgBtn(
                                                                                 `${apifunctions.api_server_url + '/' + photo.product_photo_path}`
                                                                                 ,
-                                                                                'bigimag' + photo_by_color.id + index2)}
+                                                                                'bigimag' + photo_by_color.id + indexbig)}
                                                                             alt={trans(
                                                                                 this.state.product.name_ar,
                                                                                 this.state.product.name_en
@@ -853,16 +863,43 @@ export default class Product extends React.Component {
                                                     <ul className="slides">
                                                         {photo_by_color.photos &&
                                                             photo_by_color.photos.map(
-                                                                (photo, index3) => (
-                                                                    index3 == '0' ?
+                                                                (photo, index2) => (
+                                                                    index2 == '0' ?
                                                                         (
                                                                             <li className="is-ready">
                                                                                 <span
                                                                                     className="js-smartphoto" data-id="0" data-group="1" data-index="0">
-                                                                                    <img itemprop="image" className="lazy" id={`${'bigimag' + photo_by_color.id + index2}`}
-                                                                                        alt={this.state.product.name_ar}
-                                                                                        title={this.state.product.name_ar}
-                                                                                        src={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`} />
+                                                                                    <div class="img-zoom-container">
+                                                                                        <div>
+                                                                                            <img
+
+
+                                                                                                id={`${'bigimag' + photo_by_color.id + indexbig}`}
+                                                                                                alt={trans(
+                                                                                                    this.state.product.name_ar,
+                                                                                                    this.state.product.name_en
+                                                                                                )}
+
+                                                                                                title={trans(
+                                                                                                    this.state.product.name_ar,
+                                                                                                    this.state.product.name_en
+                                                                                                )}
+                                                                                                src={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`}
+                                                                                                data-large-img-url={`${apifunctions.api_server_url + '/' + photo_by_color.product_photo_path}`}
+                                                                                                data-large-img-wrapper={`${'preview' + photo_by_color.id + indexbig}`} />
+
+                                                                                            <div className="magnifier-preview" id={`${'preview' + photo_by_color.id + indexbig}`}
+                                                                                                style={{
+
+                                                                                                    'position': 'relative', 'z-index': '44444',
+                                                                                                    'top': '-600px'
+                                                                                                    , 'left': '500px'
+                                                                                                }}> </div>
+                                                                                        </div>
+
+
+                                                                                    </div>
+
                                                                                 </span>
                                                                             </li>
                                                                         ) :
@@ -885,7 +922,8 @@ export default class Product extends React.Component {
 
                                         </div>
                                     </div>
-                                    <div className="col-600-12 col-xs-7 col-sm-6 col-md-7 col-lg-6">
+                                    <div className="col-600-12 col-xs-7 col-sm-6 col-md-7 col-lg-6"
+                                    >
                                         <div className="product-detail-container">
                                             <div className="prod-detail-header">
                                                 <input type="hidden" id="selectedQuantity" name="selectedQuantity" value="0" />
@@ -902,12 +940,7 @@ export default class Product extends React.Component {
                                                             <span ariaHidden="true" className="icontype  ui-share"><svg className="fill-white" height="22" role="img" title="Warning" viewBox="0 0 22 22" width="22"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-share"></use></svg></span>
                                                         </a>
                                                     </div>
-                                                    {/* <div className="visible-md visible-lg col-md-5">
-                <div className="ps-timer">
-                    <span ariaHidden="true" className="icontype  ui-timer"><svg height="17" role="img" title="Counter" viewBox="0 0 15 17" width="15"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-timer"></use></svg></span>
-                    <p><span className="time-left" id="timerID" data-tick="326151"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>3 Days 18:34:57</font></font></span></p>
-                </div>
-            </div> */}
+
                                                 </div>
                                                 <div id="product-price">
 
@@ -915,10 +948,15 @@ export default class Product extends React.Component {
                                                         <div className="col-xs-12">
                                                             <div className="price-row">
                                                                 <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                    {currency_trans(this.state.product.showed_price)}
+
+                                                                    {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+                                                                    <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
+
                                                                 </font></font></strong></span>
                                                                 <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                    {currency_trans(this.state.product.showed_price + 1)}
+
+                                                                    {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+
                                                                 </font></font></span>
                                                                 <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
 
@@ -1334,7 +1372,7 @@ export default class Product extends React.Component {
                                                 <div className="col-sm-12">
                                                     <strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Delivery</font></font></strong>
                                                     <p><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                        • Your orders are delivered to you by the shipping company on the estimated delivery date specified. </font></font><br />
+                                                    </font></font><br />
                                                     </p>
                                                     <strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Return</font></font></strong>
                                                     <p><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
@@ -1412,4 +1450,3 @@ export default class Product extends React.Component {
         );
     }
 }
-

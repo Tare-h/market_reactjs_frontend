@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 import axios from 'axios';
 import apifunctions from "../api/apifunctions";
 import ProductItemQuarterWidth from "../components/productitem/ProductItemQuarterWidth";
-import { getToken, end_fetch_fav } from '../Utils/Common';
+import { getToken, end_fetch_fav_details } from '../Utils/Common';
 import {
     getUser,
     start_search,
@@ -15,12 +15,12 @@ import {
     transToArabic,
     trans,
     removeUserSession,
-    is_fetching_fav,
+    is_fetching_fav_details,
     is_fetching_orders,
     is_fetching_cart,
     start_fetch_cart,
     start_fetch_orders,
-    start_fetch_fav,
+    start_fetch_fav_details,
     end_fetch_cart,
     setUserSession,
 } from '../Utils/Common';
@@ -57,11 +57,11 @@ export default class Products extends React.Component {
                     key: "value"
                 };
 
-                $(".loadscr-container").show();
-                //if (this.state.is_fav_loaded == false)
+
                 //                if (!this.state.is_fav_loaded)
-                if (!is_fetching_fav()) {
-                    start_fetch_fav();
+                if (!is_fetching_fav_details()) {
+                    $(".loadscr-container").show();
+                    start_fetch_fav_details();
                     axios.get(apifunctions.api_server_url + '/get_favorits',
                         this.config,
                         this.bodyParameters
@@ -71,11 +71,11 @@ export default class Products extends React.Component {
                         this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true });
                         $(".loadscr-container").hide();
                         //setUserSession(response.data.token, response.data.user);
-                        end_fetch_fav();
+                        end_fetch_fav_details();
                     }).catch(error => {
                         $(".loadscr-container").hide();
                         //  removeUserSession();
-                        end_fetch_fav();
+                        end_fetch_fav_details();
                     });
                 }
 
@@ -197,6 +197,7 @@ export default class Products extends React.Component {
     componentDidMount() {
         if (window.location.pathname == '/fav') {
             if (getToken()) {
+
                 this.config = {
                     headers: {
                         Authorization: 'Bearer ' + getToken(),
@@ -207,28 +208,26 @@ export default class Products extends React.Component {
                 this.bodyParameters = {
                     key: "value"
                 };
+                if (!is_fetching_fav_details()) {
 
-                $(".loadscr-container").show();
+                    start_fetch_fav_details();
+                    $(".loadscr-container").show();
+                    axios.get(apifunctions.api_server_url + '/get_favorits',
+                        this.config,
+                        this.bodyParameters
 
-                if (!this.state.is_fav_loaded)
-                    if (!is_fetching_fav()) {
-                        start_fetch_fav();
-                        axios.get(apifunctions.api_server_url + '/get_favorits',
-                            this.config,
-                            this.bodyParameters
-
-                        ).then(response => {
-                            console.table(response);
-                            this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true });
-                            $(".loadscr-container").hide();
-                            //setUserSession(response.data.token, response.data.user);
-                            end_fetch_fav();
-                        }).catch(error => {
-                            $(".loadscr-container").hide();
-                            //  removeUserSession();
-                            end_fetch_fav();
-                        });
-                    }
+                    ).then(response => {
+                        console.table(response);
+                        this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true });
+                        $(".loadscr-container").hide();
+                        //setUserSession(response.data.token, response.data.user);
+                        end_fetch_fav_details();
+                    }).catch(error => {
+                        $(".loadscr-container").hide();
+                        //  removeUserSession();
+                        end_fetch_fav_details();
+                    });
+                }
 
 
             }

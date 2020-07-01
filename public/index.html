@@ -47,8 +47,6 @@
 
     <link rel="dns-prefetch" href="https://s.perzonalization.com/" />
 
-    <link rel="dns-prefetch" href="https://static.hotjar.com/" />
-    <link rel="dns-prefetch" href="https://script.hotjar.com/" />
     <link rel="dns-prefetch" href="https://cdn.perzonalization.com/" />
 
     <link rel="dns-prefetch" href="https://gum.criteo.com/" />
@@ -133,7 +131,37 @@
           : e(window, "load", n);
       })();
     </script>
+    <link rel="stylesheet" type="text/css" href="/static/magnifier.css" />
+    <script type="text/javascript" src="/static/Event.js"></script>
+    <script type="text/javascript" src="/static/Magnifier.js"></script>
+    <script type="text/javascript">
+      var evt = new Event(),
+        m = new Magnifier(evt);
+    </script>
+
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      .img-zoom-container {
+        position: relative;
+      }
+
+      .img-zoom-lens {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        /*set the size of the lens:*/
+        width: 40px;
+        height: 40px;
+      }
+
+      .img-zoom-result {
+        border: 1px solid #d4d4d4;
+        /*set the size of the result div:*/
+        width: 300px;
+        height: 300px;
+      }
       @font-face {
         font-family: "Open Sans";
         font-weight: 400;
@@ -185,29 +213,6 @@
     </script>
 
     <!-- Modified Analytics tracking code with Optimize plugin -->
-    <script>
-      (function (i, s, o, g, r, a, m) {
-        i["GoogleAnalyticsObject"] = r;
-        (i[r] =
-          i[r] ||
-          function () {
-            (i[r].q = i[r].q || []).push(arguments);
-          }),
-          (i[r].l = 1 * new Date());
-        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-      })(
-        window,
-        document,
-        "script",
-        "https://www.google-analytics.com/analytics.js",
-        "ga"
-      );
-      ga("create", "UA-21045075-1");
-      ga("require", "GTM-N737LVH");
-    </script>
 
     <script src="/static/mainLayoutPS.min.3130f1e3.js"></script>
 
@@ -371,12 +376,6 @@
     });
   </script>
 
-  <script
-    type="text/javascript"
-    async=""
-    src="/https://dbfukofby5ycr.cloudfront.net/a9/js/dlc1.51.js"
-  ></script>
-
   <script type="text/javascript" async="" src="/static/init.js"></script>
   <script
     type="text/javascript"
@@ -483,21 +482,6 @@
     });
   </script>
 
-  <script type="text/javascript" id="">
-    (function (a, c, e, f, d, b) {
-      a.hj =
-        a.hj ||
-        function () {
-          (a.hj.q = a.hj.q || []).push(arguments);
-        };
-      a._hjSettings = { hjid: 193118, hjsv: 6 };
-      d = c.getElementsByTagName("head")[0];
-      b = c.createElement("script");
-      b.async = 1;
-      b.src = e + a._hjSettings.hjid + f + a._hjSettings.hjsv;
-      d.appendChild(b);
-    })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv\x3d");
-  </script>
   <script type="text/javascript" id="">
     (function () {
       var a = document.createElement("script");
@@ -1453,95 +1437,6 @@
     id=""
     src="/https://static.criteo.net/js/ld/ld.js"
   ></script>
-  <iframe
-    src="/static/tags.html"
-    width="1"
-    height="1"
-    scrolling="no"
-    frameborder="0"
-    style="display: none;"
-  ></iframe>
-  <script type="text/javascript" id="">
-    window.wiso = window.wiso || [];
-    window.wiso.push(
-      { s: "0245-1467" },
-      { p: "PSHomePage" },
-      {
-        _bexecute: function () {
-          if (0 < wiso.p.indexOf("ProductDetail")) {
-            var a =
-              "" == wiso._gc("l_vpvis") ? 0 : parseInt(wiso._gc("l_vpvis"));
-            a++;
-            wiso._sc("l_vpvis", a, 30);
-          }
-        },
-      },
-      {
-        _runc: function (a) {
-          ga(
-            ga.getAll()[0].get("name") + ".send",
-            "event",
-            "WIS",
-            "click",
-            a.cn + "-" + a.n,
-            !1
-          );
-        },
-      },
-      { cuid: "" },
-      { _anid: "56a93dfc-14fe-4cc7-b26a-218b9032c921" },
-      { memtyp: "" },
-
-      { skw: "" },
-      { resn: "" },
-      { catc: "undefined" },
-      { pid: "undefined" },
-      { pimg: "" },
-      { pprc: "undefined" },
-      { pttl: "undefined" },
-      { mrppcat2: "undefined" },
-      { mrppcat: "undefined" },
-      { plsr: "" },
-      { am: "undefined" },
-      { amraw: "undefined" },
-      { trid: "undefined" },
-      { mrpnl: "loggedout" },
-      { mrpgen: "" },
-      { mrps1: "" },
-      { mrps2: "" },
-      { mrps3: "" },
-      { mrps4: "" },
-      { mrps5: "" },
-      { mrps6: "" },
-      { mrps7: "" },
-      { mrps8: "" },
-      { mrps9: "" },
-      { mrps10: "" },
-      { mrps11: "" },
-      { mrps12: "" },
-      { mrps13: "" },
-      { mrps14: "" },
-      { mrps15: "" },
-      { mrps16: "" },
-      { mrps17: "" },
-      { mrps18: "" },
-      { mrps19: "" },
-      { mrps20: "" },
-      { mrps21: "" },
-      { mrps22: "" },
-      { mrps23: "" },
-      { _cstto: 1440 },
-      { _csttoi: 60 }
-    );
-    (function () {
-      var a = document.createElement("script");
-      a.type = "text/javascript";
-      a.async = !0;
-      a.src = "https://dbfukofby5ycr.cloudfront.net/a9/js/dlc1.51.js";
-      var b = document.getElementsByTagName("script")[0];
-      b.parentNode.insertBefore(a, b);
-    })();
-  </script>
 
   <script type="text/javascript" id="">
     function OnVisilabsLoaded() {
@@ -1549,24 +1444,7 @@
       a.Collect();
     }
   </script>
-  <script type="text/javascript" id="">
-    var l =
-        (0 == location.protocol.indexOf("https") ? "https" : "http") +
-        "://vsh.visilabs.net/Visilabs.min.js?sid\x3d75763259366A3345686E303D\x26oid\x3d394A48556A2F76466136733D",
-      s = document.createElement("script");
-    0 < location.href.toString().indexOf("vldebug\x3dtrue") &&
-      (l =
-        (0 == location.protocol.indexOf("https") ? "https" : "http") +
-        "://vsh.visilabs.net/Visilabs_Debug.js?sid\x3d75763259366A3345686E303D\x26oid\x3d394A48556A2F76466136733D");
-    s.onload = function () {
-      try {
-        OnVisilabsLoaded();
-      } catch (a) {}
-    };
-    s.type = "text/javascript";
-    s.src = l;
-    document.getElementsByTagName("head")[0].appendChild(s);
-  </script>
+
   <script type="text/javascript" id="">
     $(".account_menu \x3e li").on("click", "a", function () {
       var a = $(this).attr("id");

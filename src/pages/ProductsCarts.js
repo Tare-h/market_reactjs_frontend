@@ -14,18 +14,22 @@ import {
     getToken,
     getLang,
     transToEnglish,
+    save_url_befor_register_or_login,
+    get_url_befor_register_or_login,
     transToArabic,
     trans,
     removeUserSession,
-    start_fetch_cart,
-    end_fetch_cart,
-    is_fetching_cart,
+    start_fetch_cart_details,
+    is_fetching_cart_details,
+    end_fetch_cart_details,
+
     setUserSession,
 } from '../Utils/Common';
 export default class ProductsCarts extends React.Component {
     state = {
         product_id: "",
         isCartLoaded: false,
+        is_still_fetching_cart_details: false
     }
     constructor(props) {
         super(props);
@@ -37,6 +41,7 @@ export default class ProductsCarts extends React.Component {
         };
         this.buycart = this.buycart.bind(this);
         this.delete_item = this.delete_item.bind(this);
+
 
     }
     buycart() {
@@ -70,6 +75,12 @@ export default class ProductsCarts extends React.Component {
             }
 
         });
+    }
+    login_or_register_befor_buycart() {
+        save_url_befor_register_or_login(window.location.pathname);
+        $("#login_dialog").show();
+
+
     }
     delete_item(cart_id) {
         //alert(cart_id);
@@ -111,92 +122,91 @@ export default class ProductsCarts extends React.Component {
         //window.location.href)
 
         if (!this.state.isCartLoaded)
-            if (window.location.pathname == '/cart') {
 
-                if (getToken()) {
-                    this.config = {
-                        headers: {
-                            Authorization: 'Bearer ' + getToken(),
-                            'Content-Type': 'application/json'
 
-                        }
-                    };
-                    this.bodyParameters = {
-                        key: "value"
-                    };
-                    $(".loadscr-container").show();
-                    if (!is_fetching_cart()) {
+            if (getToken()) {
+                this.config = {
+                    headers: {
+                        Authorization: 'Bearer ' + getToken(),
+                        'Content-Type': 'application/json'
 
-                        start_fetch_cart();
-                        axios.get(apifunctions.api_server_url + '/get_cart_details',
-                            this.config,
-                            this.bodyParameters
-
-                        ).then(response => {
-                            console.table(response);
-                            this.setState({ carts: response.data.carts, isCartLoaded: true })
-
-                            $(".loadscr-container").hide();
-                            //setUserSession(response.data.token, response.data.user);
-                            end_fetch_cart();
-                        }).catch(error => {
-                            $(".loadscr-container").hide();
-                            //  removeUserSession();
-                            end_fetch_cart();
-                        });
                     }
+                };
+                this.bodyParameters = {
+                    key: "value"
+                };
 
-                }
-                else {
-                    this.props.history.push('/');
+                if (!is_fetching_cart_details()) {
+                    $(".loadscr-container").show();
+                    start_fetch_cart_details();
+                    axios.get(apifunctions.api_server_url + '/get_cart_details',
+                        this.config,
+                        this.bodyParameters
+
+                    ).then(response => {
+                        console.table(response);
+                        this.setState({ carts: response.data.carts, isCartLoaded: true, is_still_fetching_cart_details: false })
+
+                        $(".loadscr-container").hide();
+                        //setUserSession(response.data.token, response.data.user);
+                        end_fetch_cart_details();
+                    }).catch(error => {
+                        $(".loadscr-container").hide();
+                        //  removeUserSession();
+                        end_fetch_cart_details();
+                    });
                 }
 
             }
+            else {
+                this.props.history.push('/');
+            }
+
+
 
 
     }
     componentDidMount() {
         if (!this.state.isCartLoaded)
-            if (window.location.pathname == '/cart') {
 
-                if (getToken()) {
-                    this.config = {
-                        headers: {
-                            Authorization: 'Bearer ' + getToken(),
-                            'Content-Type': 'application/json'
 
-                        }
-                    };
-                    this.bodyParameters = {
-                        key: "value"
-                    };
-                    $(".loadscr-container").show();
-                    if (!is_fetching_cart()) {
+            if (getToken()) {
+                this.config = {
+                    headers: {
+                        Authorization: 'Bearer ' + getToken(),
+                        'Content-Type': 'application/json'
 
-                        start_fetch_cart();
-                        axios.get(apifunctions.api_server_url + '/get_cart_details',
-                            this.config,
-                            this.bodyParameters
-
-                        ).then(response => {
-                            console.table(response);
-                            this.setState({ carts: response.data.carts, isCartLoaded: true })
-                            $(".loadscr-container").hide();
-                            //setUserSession(response.data.token, response.data.user);
-                            end_fetch_cart();
-                        }).catch(error => {
-                            $(".loadscr-container").hide();
-                            //  removeUserSession();
-                            end_fetch_cart();
-                        });
                     }
+                };
+                this.bodyParameters = {
+                    key: "value"
+                };
+                if (!is_fetching_cart_details()) {
+                    $(".loadscr-container").show();
+                    start_fetch_cart_details();
+                    axios.get(apifunctions.api_server_url + '/get_cart_details',
+                        this.config,
+                        this.bodyParameters
 
-                }
-                else {
-                    this.props.history.push('/');
+                    ).then(response => {
+                        console.table(response);
+                        this.setState({ carts: response.data.carts, isCartLoaded: true, is_still_fetching_cart_details: false })
+                        $(".loadscr-container").hide();
+                        //setUserSession(response.data.token, response.data.user);
+                        end_fetch_cart_details();
+                    }).catch(error => {
+                        $(".loadscr-container").hide();
+                        //  removeUserSession();
+                        end_fetch_cart_details();
+                    });
                 }
 
             }
+            else {
+                this.props.history.push('/');
+            }
+
+
 
 
     }
@@ -251,25 +261,48 @@ export default class ProductsCarts extends React.Component {
 
                     <div id="productSummaryViewContainer" className="productSummaryViewContainer"></div>
 
-                    {this.state.carts.length > 0 ? (
+                    {this.state.carts.length > 0 &&
+                        localStorage.getItem("user") &&
+                        JSON.parse(localStorage.getItem("user")).name != "guest" ? (
 
-                        <div className="row clearfix">
-                            <div className="col-xs-12">
-                                <button type="button"
-                                    onClick={(event) => this.buycart()}
-                                    className="btn btn-primary btn-lg btn-fullwidth">
-                                    <span className="btn-text ladda-label"><font style={{ verticalAlign: 'inherit' }}>
-                                        <font style={{ verticalAlign: 'inherit' }}>
-                                            {trans("اتمام الطلب", " complete order")}      </font></font></span><div className="mloader">
-                                        <div className="bnc bnc1"></div>
-                                        <div className="bnc bnc2"></div>
-                                        <div className="bnc bnc3"></div></div>
-                                </button>
+                            <div className="row clearfix">
+                                <div className="col-xs-12">
+                                    <button type="button"
+                                        onClick={(event) => this.buycart()}
+                                        className="btn btn-primary btn-lg btn-fullwidth">
+                                        <span className="btn-text ladda-label"><font style={{ verticalAlign: 'inherit' }}>
+                                            <font style={{ verticalAlign: 'inherit' }}>
+                                                {trans("اتمام الطلب", " complete order")}      </font></font></span><div className="mloader">
+                                            <div className="bnc bnc1"></div>
+                                            <div className="bnc bnc2"></div>
+                                            <div className="bnc bnc3"></div></div>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
+                        ) : (
 
                             <div>
+                                {this.state.carts.length > 0 &&
+                                    localStorage.getItem("user") &&
+                                    JSON.parse(localStorage.getItem("user")).name == "guest" ?
+                                    (
+                                        <div className="row clearfix">
+                                            <div className="col-xs-12">
+                                                <button type="button"
+                                                    onClick={(event) => this.login_or_register_befor_buycart()}
+                                                    className="btn btn-primary btn-lg btn-fullwidth">
+                                                    <span className="btn-text ladda-label"><font style={{ verticalAlign: 'inherit' }}>
+                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                            {trans("اتمام الطلب", " complete order")}      </font></font></span><div className="mloader">
+                                                        <div className="bnc bnc1"></div>
+                                                        <div className="bnc bnc2"></div>
+                                                        <div className="bnc bnc3"></div></div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) :
+                                    (<div></div>)
+                                }
                             </div>
                         )}
 
@@ -282,10 +315,22 @@ export default class ProductsCarts extends React.Component {
                                     {trans("سلتك هي ", " Your Cart is")}
                                 </font></font></h1>
                             ) : (
+                                    is_fetching_cart_details() ?
+                                        (
 
-                                    <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                        {trans("سلتك فارغة ", " Your Cart is")}
-                                    </font></font></h1>
+                                            <h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                {trans("سلتك فارغة ", " Your Cart is")}
+                                            </font></font></h1>
+                                        )
+                                        :
+                                        (<h1 id="productListVisibleName"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                            {trans("الرحاء الانتظار قليلا ", " please waite...")}
+                                        </font></font></h1>
+                                        )
+
+
+
+
                                 )}
 
                         </div>

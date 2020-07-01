@@ -56,16 +56,12 @@ export default class ProductItem4Cart extends React.Component {
                                     (productPhoto, index2) => (
                                         index2 == '0' ?
                                             (
-                                                <img className="prd-img-top ls-is-cached lazyloaded" id={index2}
+                                                <img className="  ls-is-cached lazyloaded" id={index2}
                                                     src={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
                                                     srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
                                                     data-srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`} alt="US Polo Assn.  T-Shirt Green" title="US Polo Assn.  T-Shirt Green" />
                                             ) :
-                                            <img className="prd-img-btm ls-is-cached lazyloaded"
-                                                src={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                data-srcset={`${apifunctions.api_server_url + '/' + productPhoto.product_photo_path}`}
-                                                alt="US Polo Assn.  T-Shirt Green" title="US Polo Assn.  T-Shirt Green" />
+                                            <div></div>
 
                                     )
                                 )}

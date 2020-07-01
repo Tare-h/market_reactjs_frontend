@@ -12,6 +12,17 @@ import Home from "../pages/Home";
 import Footer from "../components/Footer";
 import Product from "../pages/Product";
 import Cart from "../pages/Cart";
+import $ from "jquery";
+import {
+    getUser,
+    getToken,
+    getLang,
+    transToEnglish,
+    transToArabic,
+    trans,
+    removeUserSession,
+    setUserSession,
+} from '../Utils/Common';
 import apifunctions from "../api/apifunctions"
 import ChangePassword from "../pages/ChangePassword";
 import Login from '../components/account/Login';
@@ -50,7 +61,11 @@ export default class PublicPage extends React.Component {
             });
         apifunctions.getCategory4NavBar()
             .then(data => {
+
+                console.table(data);
+
                 this.setState({
+
                     category4NavBar: data.data.categories.sons
                 });
                 //console.table(data);
@@ -65,7 +80,11 @@ export default class PublicPage extends React.Component {
 
         return foundCampaignCategory ? <CampaignCategory campaignCategory={foundCampaignCategory} /> : <NotFound />;
     };
+    closeLoginDialog() {
 
+        $("#login_dialog").hide();
+        // 
+    }
     render() {
         return (
 
@@ -79,6 +98,34 @@ export default class PublicPage extends React.Component {
                             <div className="bnc bnc3"></div>
                         </div></div>
                     </div>
+                </div>
+
+                <div className="modal fade in " id="login_dialog" tabIndex="-1" role="dialog" aria-labelledby="share-modal" aria-hidden="true">
+                    <div className="login-modal" style={{ backgroundColor: "white" }}>
+                        <div className="modal-header">
+                            <button type="button" className="close"
+                                onClick={(event) => this.closeLoginDialog()} datadismiss="modal" aria-hidden="true">
+                                <font style={{ verticalAlign: 'inherit' }}>
+                                    <font style={{ verticalAlign: 'inherit' }} >×</font>
+                                </font></button>
+                            <h4 className="modal-title" id="myModalLabel">
+                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                    {trans(
+                                        'تسجيل دخول',
+                                        'Member login'
+                                    )}
+
+                                </font></font></h4>
+                        </div>
+                        {
+                            window.location.href.substring(window.location.href.lastIndexOf('/') + 1) != 'login'
+                                ? <Login {...this.props} >
+                                    {this.props}
+                                </Login> : <div></div>
+                        }
+
+                    </div>
+
                 </div>
                 <div>
                     <NavBar categories={this.state.category4NavBar}  {...this.props} />

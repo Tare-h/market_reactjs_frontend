@@ -9,7 +9,7 @@ import {
     transToEnglish,
     transToArabic,
     trans,
-    currency_trans,
+    currency_trans, currency_transing, calc_discount,
     removeUserSession,
 } from "../../Utils/Common";
 export default class ProductItemQuarterWidthexport extends React.Component {
@@ -21,6 +21,7 @@ export default class ProductItemQuarterWidthexport extends React.Component {
         };
 
     }
+
     render() {
         return (
             <NavLink
@@ -87,14 +88,19 @@ export default class ProductItemQuarterWidthexport extends React.Component {
                                     <span className="prd_price ">
                                         <strong>
                                             <span className="text-danger"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                {currency_trans(this.state.product.showed_price)}
+
+                                                {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+                                                <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
                                             </font></font></span>
                                         </strong>
                                     </span>
                                     <font style={{ verticalAlign: 'inherit' }}>
                                         <span className="act_price text-muted "><s>
                                             <font style={{ verticalAlign: 'inherit' }}>
-                                                {currency_trans(this.state.product.showed_price + 1)}
+
+                                                {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+
+
                                             </font></s></span>
                                         <span className="prd_price "><strong><span className="text-danger">
                                         </span></strong></span></font>

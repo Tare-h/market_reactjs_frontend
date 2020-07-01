@@ -303,6 +303,31 @@ class Privatepages extends Component {
                         </div></div>
                     </div>
                 </div>
+
+                <div className="modal fade in " id="login_dialog" tabindex="-1" role="dialog" aria-labelledby="share-modal" ariaHidden="true">
+                    <div className="login-modal" style={{ backgroundColor: "white" }}>
+                        <div className="modal-header">
+                            <button type="button" className="close"
+                                onClick={(event) => this.closeLoginDialog()} dataDismiss="modal" ariaHidden="true">
+                                <font style={{ verticalAlign: 'inherit' }}>
+                                    <font style={{ verticalAlign: 'inherit' }} >×</font>
+                                </font></button>
+                            <h4 className="modal-title" id="myModalLabel">
+                                <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                    {trans(
+                                        'تسجيل دخول',
+                                        'Member login'
+                                    )}
+
+                                </font></font></h4>
+                        </div>
+
+                        <Login {...this.props} >
+                            {this.props}
+                        </Login>
+                    </div>
+
+                </div>
                 <header>
                     <div className="container">
 
@@ -326,16 +351,16 @@ class Privatepages extends Component {
                                                     src="/static/logar.png"
                                                     width="140px"
                                                     height="80px"
-                                                    dataSrc="/static/logar.png"
+                                                    dataSrc="/static/logonew.jpg"
                                                     alt="blue"
                                                     className="  lazyloaded"
                                                 />
                                             ) : (
                                                     <img
-                                                        src="/static/logoen.png"
+                                                        src="/static/logonew.jpg"
                                                         width="140px"
                                                         height="80px"
-                                                        dataSrc="/static/logoen.png"
+                                                        dataSrc="/static/logonew.jpg"
                                                         alt="blue"
                                                         className="  lazyloaded"
                                                     />

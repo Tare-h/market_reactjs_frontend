@@ -9,13 +9,26 @@ import {
   getToken,
   getLang,
   transToEnglish,
+  get_url_befor_register_or_login,
   transToArabic,
   trans,
   removeUserSession,
+  is_fetching_fav,
+  is_fetching_orders,
+  is_fetching_cart,
+  start_fetch_cart,
+  start_fetch_orders,
+  start_fetch_fav,
+  end_fetch_cart,
+  end_fetch_orders,
+  end_fetch_fav,
 } from "../../Utils/Common";
 import { Redirect } from 'react-router';
 function Login(props) {
+
   let currentprops = props;
+
+  $(".loadscr-container").hide();
   let formIsValid = true;
   const email = useFormInput('');
   const [error_email, setError_email] = useState(null);
@@ -28,13 +41,13 @@ function Login(props) {
   const showHidePassword = () => {
     if (!password_is_shown) {
       password_is_shown = true;
-      $("#activation_password").attr("type", "text");
+      $("#login_activation_password").attr("type", "text");
       //$("#password").attr("type", "password");
     }
     else {
       password_is_shown = false;
       //$("#activation_password").attr("type", "text");
-      $("#activation_password").attr("type", "password");
+      $("#login_activation_password").attr("type", "password");
     }
   }
   const handleLogin = () => {
@@ -90,13 +103,10 @@ function Login(props) {
       );
     }
     else {
+      // alert('login');
       setError(" ");
-
-
-
-
-
       setError(null);
+      $(".loadscr-container").show();
       setLoading(true);
       axios.post(apifunctions.api_server_url + '/' + 'login_user'
 
@@ -106,6 +116,10 @@ function Login(props) {
           password: password.value
 
           , email: email.value
+
+          , user: JSON.parse(localStorage.getItem("user"))
+
+
 
 
         }
@@ -123,13 +137,110 @@ function Login(props) {
         console.log('in login in response : ');
         console.log(response);
         try {
-          setUserSession(response.data.token, response.data.user);
-          //   props.history.push('/profile');
 
-          if (window.location.pathname != '/login')
-            currentprops.history.push(window.location.pathname);
-          else
-            currentprops.history.push('/');
+          setUserSession(response.data.token, response.data.user);
+          let config = {
+            headers: {
+              Authorization: "Bearer " + getToken(),
+              "Content-Type": "application/json",
+            },
+          };
+          let bodyParameters = {
+            key: "value",
+          };
+
+          if (!is_fetching_fav()) {
+            start_fetch_fav();
+            $(".loadscr-container").show();
+            axios
+              .get(
+                apifunctions.api_server_url + "/get_favorits",
+                config,
+                bodyParameters
+              )
+              .then((response) => {
+                console.table(response);
+                $("#fav_count").attr(
+                  "style",
+                  "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                );
+
+                $("#fav_count").html(response.data.favorite_ads.length);
+
+                $(".loadscr-container").hide();
+                end_fetch_fav();
+              })
+              .catch((error) => {
+                $(".loadscr-container").hide();
+                //  removeUserSession();
+                end_fetch_fav();
+              });
+          }
+          if (!is_fetching_orders()) {
+            start_fetch_orders();
+            //  alert('login start_fetch_orders');
+            $(".loadscr-container").show();
+            axios
+              .get(
+                apifunctions.api_server_url + "/get_orders",
+                config,
+                bodyParameters
+              )
+              .then((response) => {
+                end_fetch_orders();
+                console.table(response);
+
+                $("#myorder_count").attr(
+                  "style",
+                  "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                );
+
+                $("#myorder_count").html(response.data.orders.length);
+
+
+                $(".loadscr-container").hide();
+                //setUserSession(response.data.token, response.data.user);
+                end_fetch_orders();
+              })
+              .catch((error) => {
+                //  removeUserSession();
+                $(".loadscr-container").hide();
+                end_fetch_orders();
+              });
+
+          } if (!is_fetching_cart()) {
+            start_fetch_cart();
+            $(".loadscr-container").show();
+            axios
+              .get(
+                apifunctions.api_server_url + "/get_cart",
+                config,
+                bodyParameters
+              )
+              .then((response) => {
+                console.table(response);
+                $("#cart_count").attr(
+                  "style",
+                  "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
+                );
+
+                $("#cart_count").html(response.data.carts.length);
+
+                //setUserSession(response.data.token, response.data.user);
+                $(".loadscr-container").hide();
+                end_fetch_cart();
+              })
+              .catch((error) => {
+                //  removeUserSession();
+                $(".loadscr-container").hide();
+                end_fetch_cart();
+              });
+          }
+          $(".loadscr-container").hide();
+          props.history.push(get_url_befor_register_or_login());
+
+
+          //     window.location.href(get_url_befor_register_or_login());
           try {
             $("#login_dialog").hide();
           }
@@ -146,6 +257,7 @@ function Login(props) {
         }
       }).catch(error => {
         //console.table(error);
+        $(".loadscr-container").hide();
         setLoading(false);
         try {
           if (error.response.status === 401) {
@@ -168,7 +280,7 @@ function Login(props) {
     }
   }
   return (
-    <main class="container push-top" id="home-body-id">
+    <main className="container push-top" id="home-body-id">
 
 
 
@@ -205,30 +317,30 @@ function Login(props) {
 
               <div className="col-xs-12 form-group">
                 {error_email && <><small style={{ color: 'red' }}>{error_email}</small><br /></>}
-                <label className="std-font" for="Username"><font style={{ verticalAlign: "inherit" }}>
+                <label className="std-font" htmlFor="Username"><font style={{ verticalAlign: "inherit" }}>
                   <font style={{ verticalAlign: "inherit" }}>  {trans("الأيميل", "Email*")}</font></font></label>
                 <input type="text" {...email} placeholder={trans("أدخل عنوان الإيميل", "E-Mail Address")} className="form-control"
-                  ariaRequired="true" />
+                  aria-required="true" />
               </div>
 
               <div className="col-xs-12 form-group">
 
 
 
-                <div class="hideShowPassword-wrapper"
+                <div className="hideShowPassword-wrapper"
                   style={{ position: 'relative', display: 'block', verticalAlign: 'baseline', margin: "0px" }}>
                   {error_password && <><small style={{ color: 'red' }}>{error_password}</small><br /></>}
-                  <label className="std-font" for="Password">
+                  <label className="std-font" htmlFor="Password">
                     <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}>
                       {trans(" كلمة السر", "Password*")}
 
                     </font></font></label>
-                  <input {...password} placeholder={trans(" كلمة السر", "Password*")} type="password" id="activation_password"
-                    name="Password" maxlength="20" autocomplete="off"
-                    class="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
+                  <input {...password} placeholder={trans(" كلمة السر", "Password*")} type="password" id="login_activation_password"
+                    name="Password" maxLength="20" autoComplete="off"
+                    className="form-control xss-validate js-pass-reg hideShowPassword-field" placeholder="Your password"
                     aria-required="true" style={{ margin: '0px', paddingRight: '66px' }} />
-                  <button type="button" role="button" ariaLabel="Show Password" title="Show Password"
-                    tabindex="0" class="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
+                  <button type="button" role="button" aria-label="Show Password" title="Show Password"
+                    tabIndex="0" className="btn btn-link btn-revealer smaller hideShowPassword-toggle-show"
                     aria-pressed="false"
                     onClick={showHidePassword}
                     id="activation_showpassword"
@@ -246,15 +358,15 @@ function Login(props) {
                   <div className="col-xxs-12 col-xs-12">
                     <div className="checkbox">
                       <label>
-                        <input type="checkbox" name="RemeberMe" id="RememberMe" value="true" ariaLabel="Remember me" />
+                        <input type="checkbox" name="RemeberMe" id="RememberMe" value="true" aria-label="Remember me" />
                         <span className="smaller" >
                           <font style={{ verticalAlign: "inherit" }}><font style={{ verticalAlign: "inherit" }}> Remember me</font></font></span>
-                        <input type="hidden" name="RememberMe" value="false" ariaLabel="hidden" />
+                        <input type="hidden" name="RememberMe" value="false" aria-label="hidden" />
                       </label>
                     </div>
                   </div>
                   <div className="col-xxs-12 col-xs-12">
-                    <a id="ela-quicklogin-sifremini-unuttum" className="text-right lostpassword" href="/sifremi-unuttum" ariaLabel="I forgot my password">
+                    <a id="ela-quicklogin-sifremini-unuttum" className="text-right lostpassword" href="/sifremi-unuttum" aria-label="I forgot my password">
                       <font style={{ verticalAlign: "inherit" }}>
                         <font style={{ verticalAlign: "inherit" }}>I forgot my password</font></font></a>
                   </div>
@@ -264,12 +376,14 @@ function Login(props) {
               <div className="col-xs-12 form-group">
                 {error && <><small style={{ color: 'red' }}>{error}</small><br /></>}<br />
 
-                <button type="submit" className="btn btn-primary btn-lg btn-block btn-w-loader js-quick-login" value={loading ? 'Loading...' : 'Login'} onClick={handleLogin} disabled={loading}>
+                <button type="submit" className="btn btn-primary btn-lg btn-block btn-w-loader js-quick-login" value={loading ? 'Loading...' : 'Login'}
+
+                  onClick={handleLogin} disabled={loading}>
                   <span className="btn-text"><font style={{ verticalAlign: "inherit" }}>
                     <font style={{ verticalAlign: "inherit" }}>
                       {trans("  تسجيل دخول", "Login")}
 
-                    </font></font></span><div className="mloader" ariaHidden="true">
+                    </font></font></span><div className="mloader" aria-hidden="true">
                     <div className="bnc bnc1"></div><div className="bnc bnc2"></div><div className="bnc bnc3"></div></div></button>
               </div>
 
