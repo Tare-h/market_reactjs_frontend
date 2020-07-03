@@ -1,3 +1,4 @@
+
 import _ from 'lodash';
 import React from 'react'
 import axios from 'axios';
@@ -36,6 +37,101 @@ export default class Product extends React.Component {
         this.imageonMouseOutDiventOuted = this.imageonMouseOutDiventOuted.bind(this);
         this.addCurrentProducttoFavorit = this.addCurrentProducttoFavorit.bind(this);
         this.removeCurrentProducttoFavorit = this.removeCurrentProducttoFavorit.bind(this);
+        this.updateCurrentProduct = this.updateCurrentProduct.bind(this);
+
+        this.deleteProductithallStocks = this.deleteCurrentProductwithallStocks.bind(this);
+
+    }
+
+    updateCurrentProduct() {
+        {
+            $(".loadscr-container").show();
+            let product_id_in_url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+            axios.post(apifunctions.api_server_url + '/update_product/' + product_id_in_url
+                ,
+                {
+                    name: document.getElementById('name_ar').value
+                    , name_en: document.getElementById('name_en').value
+                    , newprice: document.getElementById('newprice').value
+                    , showed_price: document.getElementById('showed_price').value
+                    , material_ar: document.getElementById('material_ar').value
+                    , material_en: document.getElementById('material_en').value
+                    , note_ar: document.getElementById('note_ar').value
+                    , note_en: document.getElementById('note_en').value
+
+                }
+
+                ,
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + getToken(),
+                        'Content-Type': 'application/json'
+
+                    }
+                }
+
+            ).then(response => {
+                //  setUserSession(getToken(), response.data);
+                console.log(response);
+
+                $(".loadscr-container").hide();
+
+
+
+
+                this.setState({ product: response.data })
+                //window.location.reload(false);
+
+                // this.props.history.push('/product/' + product_id_in_url);
+                // this.props.history.push('/profile');
+            }).catch(error => {
+                //console.table(error);
+                $(".loadscr-container").hide();
+
+
+            });
+        }
+
+    }
+    deleteCurrentProductwithallStocks() {
+        if (window.confirm('حذف نهائي')) {
+            $(".loadscr-container").show();
+            let product_id_in_url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+            axios.post(apifunctions.api_server_url + '/delete_product_with_all_stocks/' + product_id_in_url
+                ,
+                this.state.user
+                ,
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + getToken(),
+                        'Content-Type': 'application/json'
+
+                    }
+                }
+
+            ).then(response => {
+                //  setUserSession(getToken(), response.data);
+                console.log(response);
+                $(".loadscr-container").hide();
+
+                this.setState({
+
+                    product: {}
+                });
+                //window.location.reload(false);
+
+                // this.props.history.push('/product/' + product_id_in_url);
+                // this.props.history.push('/profile');
+            }).catch(error => {
+                //console.table(error);
+                $(".loadscr-container").hide();
+                if (error.response.status === 401) {
+
+
+                }
+
+            });
+        }
 
     }
     removeCurrentProducttoFavorit() {
@@ -322,7 +418,6 @@ export default class Product extends React.Component {
                         <ol className="breadcrumb">
                             <li><a id="ela-ps-bc-oik" href="/kampanya/alisveris"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Special Discount Club</font></font></a></li>
                             <li><a id="ela-ps-bc-kam-u-s-polo-assn-" href="/kampanya/liste/91150/u-s-polo-assn-"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-
                               {trans(
                                       this.state.product.name_ar,
                                       this.state.product.name_en
@@ -463,13 +558,31 @@ export default class Product extends React.Component {
                                                 <div className="prod-detail-header">
                                                     <input type="hidden" id="selectedQuantity" name="selectedQuantity" value="0" />
                                                     <div className="row no-margin">
-                                                        <div className="col-xs-12 col-sm-12 col-md-7">
-                                                            <h1><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
-                                                                {trans(
-                                                                    this.state.product.name_ar,
-                                                                    this.state.product.name_en
-                                                                )}
-                                                            </font></font><span className="prod-subtitle text-muted">
+                                                        <div className="col-xs-12 col-sm-12 col-md-12">
+                                                            <h1><font style={{ verticalAlign: 'inherit' }}>
+                                                                {getToken() && getUser().name == 'employee' ? (
+                                                                    <div>
+                                                                        name_ar  <input type="text" name="name_ar" id="name_ar" value={this.state.product.name_ar} />
+                                                                        <br />
+                                                                            name_en <input type="text" name="name_en" id="name_en" value={this.state.product.name_en} />
+                                                                        <br />
+                                                                    </div>
+                                                                ) : (
+
+                                                                        < font style={{ verticalAlign: 'inherit' }}>
+                                                                            {
+                                                                                trans(
+                                                                                    this.state.product.name_ar,
+                                                                                    this.state.product.name_en
+
+
+                                                                                )}
+                                                                        </font>
+                                                                    )
+                                                                }
+
+
+                                                            </font><span className="prod-subtitle text-muted">
                                                                     <font style={{ verticalAlign: 'inherit' }}>
 
                                                                     </font></span>
@@ -489,24 +602,43 @@ export default class Product extends React.Component {
 
                                                         <div className="row no-margin">
                                                             <div className="col-xs-12">
-                                                                <div className="price-row">
-                                                                    <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                                {getToken() && getUser().name == 'employee' ? (
+                                                                    <div className="price-row">
+                                                                        <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                                            newprice in Dinar <input type="text" name="newprice" id="newprice" value={this.state.product.newprice} />
+                                                                            <br />
+                                                                            {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+                                                                            <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
 
-                                                                        {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
-                                                                        <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
+                                                                        </font></font></strong></span>
+                                                                        <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                                            old price in Dinar <input type="text" name="showed_price" id="showed_price" value={this.state.product.showed_price} />
+                                                                            <br />
+                                                                            {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
 
-                                                                    </font></font></strong></span>
-                                                                    <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+                                                                        </font></font></span>
+                                                                        <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
 
-                                                                        {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
 
-                                                                    </font></font></span>
-                                                                    <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
+                                                                    </div>
+                                                                ) :
+                                                                    <div className="price-row">
+                                                                        <span className="final-price push-right text-danger"><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
 
-                                                                    {/*<div className="cardinfo ellipses">
-                                                    <span className="badge-text"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Free cargo</font></font></span>
-                                                </div>*/}
-                                                                </div>
+                                                                            {currency_transing(this.state.product.newprice, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+                                                                            <br />   {trans('حسم', 'discount')}    {calc_discount(this.state.product.newprice, this.state.product.showed_price)} %  <br />
+
+                                                                        </font></font></strong></span>
+                                                                        <span className="actual-price text-muted bigger push-right"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
+
+                                                                            {currency_transing(this.state.product.showed_price, this.state.product.currency_and_taxex.one_dinar_in_dollar, this.state.product.currency_and_taxex.one_dollars_in_SAR, this.state.product.currency_and_taxex.one_dollars_in_AED, this.state.product.currency_and_taxex.one_dollars_in_BHD, this.state.product.currency_and_taxex.one_dollars_in_OMR, this.state.product.currency_and_taxex.one_dollars_in_QAR)}
+
+                                                                        </font></font></span>
+                                                                        <span className="discount-percent hidden"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>57% </font></font><span className="smaller"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Discount</font></font></span></span>
+
+
+                                                                    </div>
+                                                                }
                                                             </div>
                                                         </div>
 
@@ -729,71 +861,125 @@ export default class Product extends React.Component {
                                                                             <a href="/sepet" className="btn btn-default btn-lg btn-fullwidth btn-gtb">
                                                                                 <font style={{ verticalAlign: 'inherit' }}>
                                                                                     <font style={{ verticalAlign: 'inherit' }}>Buy</font></font></a>
-                                                                            {getToken() ? (
-                                                                                <div id="favorite" >
-                                                                                    {
-                                                                                        this.state.product.is_favorit ? (
+                                                                            {getUser().name != 'employee' ? (<span>
+                                                                                {getToken() ? (
+                                                                                    <div id="favorite" >
+                                                                                        {
+                                                                                            this.state.product.is_favorit ? (
 
 
-                                                                                            <button type="button"
-                                                                                                onClick={(event) => this.removeCurrentProducttoFavorit()}
-                                                                                                className="btn btn-block addfav-link">
-                                                                                                <span ariaHidden="true"
+                                                                                                <button type="button"
                                                                                                     onClick={(event) => this.removeCurrentProducttoFavorit()}
-                                                                                                    className="icontype  ui-favourite">
-                                                                                                    <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
-                                                                                                    <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        {trans('ازالة من المفضلة', '  remove from  Favorites')}
-                                                                                                    </font></font></button>
-                                                                                        ) :
-                                                                                            <button type="button"
-                                                                                                onClick={(event) => this.addCurrentProducttoFavorit()}
-                                                                                                className="btn btn-block addfav-link">
-                                                                                                <span ariaHidden="true"
+                                                                                                    className="btn btn-block addfav-link">
+                                                                                                    <span ariaHidden="true"
+                                                                                                        onClick={(event) => this.removeCurrentProducttoFavorit()}
+                                                                                                        className="icontype  ui-favourite">
+                                                                                                        <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                            {trans('ازالة من المفضلة', 'remove from  Favorites')}
+                                                                                                        </font></font></button>
+                                                                                            ) :
+                                                                                                <button type="button"
                                                                                                     onClick={(event) => this.addCurrentProducttoFavorit()}
-                                                                                                    className="icontype  ui-favourite">
-                                                                                                    <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
-                                                                                                    <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        {trans(
-                                                                                                            'أضف للمفضلة',
-                                                                                                            ' Add to Favorites'
-                                                                                                        )}
-                                                                                                    </font></font></button>
+                                                                                                    className="btn btn-block addfav-link">
+                                                                                                    <span ariaHidden="true"
+                                                                                                        onClick={(event) => this.addCurrentProducttoFavorit()}
+                                                                                                        className="icontype  ui-favourite">
+                                                                                                        <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                            {trans(
+                                                                                                                'أضف للمفضلة',
+                                                                                                                ' Add to Favorites'
+                                                                                                            )}
+                                                                                                        </font></font></button>
+
+                                                                                        }
+                                                                                    </div>
+                                                                                ) : <div id="favorite">
+                                                                                        {
+                                                                                            this.state.product.is_favorit ? (
+                                                                                                <button type="button"
+                                                                                                    onClick={(event) => this.removeCurrentProducttoFavorit()}
+                                                                                                    className="btn btn-block addfav-link">
+                                                                                                    <span ariaHidden="true"
+                                                                                                        onClick={(event) => this.removeCurrentProducttoFavorit()}
+                                                                                                        className="icontype  ui-favourite">
+                                                                                                        <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                            {trans('ازالة من السلة', '  remove from  Favorites')}
+                                                                                                        </font></font></button>
+
+                                                                                            ) :
+
+
+                                                                                                <button type="button"
+                                                                                                    onClick={(event) => this.showLoginDialog()}
+                                                                                                    className="btn btn-block addfav-link">
+                                                                                                    <span ariaHidden="true"
+                                                                                                        onClick={(event) => this.showLoginDialog()}
+                                                                                                        className="icontype  ui-favourite">
+                                                                                                        <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                        <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                            {trans(
+                                                                                                                'أضف للمفضلة',
+                                                                                                                ' Add to Favorites'
+                                                                                                            )}
+
+                                                                                                        </font></font></button>
+                                                                                        }
+                                                                                    </div>
+                                                                                }
+                                                                            </span>) : (
+                                                                                    <span></span>
+                                                                                )
+                                                                            }
+                                                                            {getToken() && getUser().name == 'employee' ? (
+                                                                                <div id="updateproduct" >
+                                                                                    {
+
+
+
+                                                                                        <button type="button"
+                                                                                            style={{ backgroundColor: 'green' }}
+                                                                                            onClick={(event) => this.updateCurrentProduct()}
+                                                                                            className="btn btn-block addfav-link">
+                                                                                            <span ariaHidden="true"
+                                                                                                onClick={(event) => this.updateCurrentProduct()}
+                                                                                                className="icontype  ui-favourite">
+                                                                                                <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                    {trans(' تعديل معلومات المنتج', '  update product info')}
+                                                                                                </font></font></button>
+
+
 
                                                                                     }
                                                                                 </div>
-                                                                            ) : <div id="favorite">
+                                                                            ) : <div></div>}
+                                                                            {getToken() && getUser().name == 'employee' ? (
+                                                                                <div id="deleteproduct" >
                                                                                     {
-                                                                                        this.state.product.is_favorit ? (
-                                                                                            <button type="button"
-                                                                                                onClick={(event) => this.removeCurrentProducttoFavorit()}
-                                                                                                className="btn btn-block addfav-link">
-                                                                                                <span ariaHidden="true"
-                                                                                                    onClick={(event) => this.removeCurrentProducttoFavorit()}
-                                                                                                    className="icontype  ui-favourite">
-                                                                                                    <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
-                                                                                                    <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        {trans('ازالة من السلة', '  remove from  Favorites')}
-                                                                                                    </font></font></button>
-
-                                                                                        ) :
 
 
-                                                                                            <button type="button"
-                                                                                                onClick={(event) => this.showLoginDialog()}
-                                                                                                className="btn btn-block addfav-link">
-                                                                                                <span ariaHidden="true"
-                                                                                                    onClick={(event) => this.showLoginDialog()}
-                                                                                                    className="icontype  ui-favourite">
-                                                                                                    <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
-                                                                                                    <font style={{ verticalAlign: 'inherit' }}>
-                                                                                                        {trans(
-                                                                                                            'أضف للمفضلة',
-                                                                                                            ' Add to Favorites'
-                                                                                                        )}
-                                                                                                    </font></font></button>
+
+                                                                                        <button type="button"
+                                                                                            style={{ backgroundColor: 'red' }}
+                                                                                            onClick={(event) => this.deleteCurrentProductwithallStocks()}
+                                                                                            className="btn btn-block addfav-link">
+                                                                                            <span ariaHidden="true"
+                                                                                                onClick={(event) => this.deleteCurrentProductwithallStocks()}
+                                                                                                className="icontype  ui-favourite">
+                                                                                                <svg className="stroke-purple" height="16" role="img" title="Favorites" viewBox="0 0 16 16" width="16"><use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-favourite"></use></svg></span><font style={{ verticalAlign: 'inherit' }}>
+                                                                                                <font style={{ verticalAlign: 'inherit' }}>
+                                                                                                    {trans('حذف كامل المنتج', '  delete all  product ')}
+                                                                                                </font></font></button>
+
+
+
                                                                                     }
-                                                                                </div>}
+                                                                                </div>
+                                                                            ) : <div></div>}
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -810,7 +996,7 @@ export default class Product extends React.Component {
 
 
 
-                                    </div>
+                                    </div >
                                 ) :
 
                                 <div className="row clearfix" style={{ display: "none" }} id={`${'photo_by_color' + photo_by_color.id}`}  >
@@ -928,7 +1114,7 @@ export default class Product extends React.Component {
                                             <div className="prod-detail-header">
                                                 <input type="hidden" id="selectedQuantity" name="selectedQuantity" value="0" />
                                                 <div className="row no-margin">
-                                                    <div className="col-xs-12 col-sm-12 col-md-7">
+                                                    <div className="col-xs-12 col-sm-12 col-md-12">
                                                         <h1><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
                                                             {this.state.product.name_ar}
                                                         </font></font><span className="prod-subtitle text-muted"><font style={{ verticalAlign: 'inherit' }}>
@@ -1161,7 +1347,7 @@ export default class Product extends React.Component {
                                                                         <a href="/sepet" className="btn btn-default btn-lg btn-fullwidth btn-gtb">
                                                                             <font style={{ verticalAlign: 'inherit' }}>
                                                                                 <font style={{ verticalAlign: 'inherit' }}>Buy</font></font></a>
-                                                                        {getToken() ? (
+                                                                        {getToken() && getUser().name != 'employee' ? (
                                                                             <div id="favorite" >
                                                                                 <button type="button"
                                                                                     onClick={(event) => this.addCurrentProducttoFavorit()}
@@ -1214,13 +1400,9 @@ export default class Product extends React.Component {
                     <use xlinkHref="/Content/sprites/morhipo-icons.svg?v=25#ui-m-logo-new"></use>
                     </svg>
             </span>
-
-
-
             <span className="morpass-notify" data-tier="none">
                 <span><strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>With Morpass</font></font></strong><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}> , 150 TL and Over </font><strong><font style={{ verticalAlign: 'inherit' }}>Cargo</font></strong><font style={{ verticalAlign: 'inherit' }}> is Free! </font></font><a href="/morpass" className="importantlink"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Become a Morpass!</font></font></a></span>
             </span>
-
         </div>  
     </div>
 */}
@@ -1244,7 +1426,10 @@ export default class Product extends React.Component {
 
                             <div className="index-match tab-to-accord panel-group" id="product_tabs-accordion">
                                 <div className="panel panel-default panel-faq">
-                                    <a className="panel-heading" id="ela-urun-sekme-accr-aboutprodtab" data-toggle="collapse" data-parent="#product_tabs-accordion" href="#aboutprodtab" aria-expanded="true">
+                                    <a className="panel-heading" id="ela-urun-sekme-accr-aboutprodtab" data-toggle="collapse"
+                                        data-parent="#product_tabs-accordion"
+                                        href="#aboutprodtab"
+                                        aria-expanded="true">
                                         <h2 className="h4 panel-title"><font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>
                                             {trans(
                                                 'معلومات المنتجات',
@@ -1313,13 +1498,35 @@ export default class Product extends React.Component {
                                                                 </td>
                                                                 <td>
                                                                     <font style={{ verticalAlign: 'inherit' }}>
+                                                                        {getToken() && getUser().name == 'employee' ? (
+                                                                            <div>
+                                                                                material_ar  <input type="text" name="material_ar" id="material_ar" value={this.state.product.material_ar} />
+                                                                                <br />
+                                                                        material_en <input type="text" name="material_en" id="material_en" value={this.state.product.material_en} />
+                                                                                <br />
+                                                                            </div>
+                                                                        ) : (
+
+                                                                                <font style={{ verticalAlign: 'inherit' }}>
+
+                                                                                    {trans(
+                                                                                        this.state.product.material_ar,
+                                                                                        this.state.product.material_en
+                                                                                    )}
+
+                                                                                </font>
+                                                                            )
+                                                                        }
+
+
                                                                         <font style={{ verticalAlign: 'inherit' }}>
                                                                             {trans(
                                                                                 this.state.product.material_ar,
                                                                                 this.state.product.material_en
                                                                             )}
 
-                                                                        </font></font>
+                                                                        </font>
+                                                                    </font>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -1343,10 +1550,27 @@ export default class Product extends React.Component {
                                                                     <td>
                                                                         <font style={{ verticalAlign: 'inherit' }}>
                                                                             <font style={{ verticalAlign: 'inherit' }}>
-                                                                                {trans(
-                                                                                    this.state.product.note_ar,
-                                                                                    this.state.product.note_en
-                                                                                )}
+                                                                                {getToken() && getUser().name == 'employee' ? (
+                                                                                    <div>
+                                                                                        note_ar  <textarea cols="55" rows="7" type="text" name="note_ar" id="note_ar" value={this.state.product.note_ar} />
+                                                                                        <br />
+                                                                                        note_en <textarea cols="55" rows="7" type="text" name="note_en" id="note_en" value={this.state.product.note_en} />
+                                                                                        <br />
+                                                                                    </div>
+                                                                                ) : (
+
+                                                                                        <font style={{ verticalAlign: 'inherit' }}>
+
+                                                                                            {trans(
+                                                                                                this.state.product.note_ar,
+                                                                                                this.state.product.note_en
+                                                                                            )}
+
+                                                                                        </font>
+                                                                                    )
+                                                                                }
+
+
 
                                                                             </font></font>
                                                                     </td>
@@ -1399,10 +1623,8 @@ export default class Product extends React.Component {
         <a href="/kampanya/liste/91150/u-s-polo-assn-" title=" {this.state.product.name_ar}  See All Products of Your Campaign" className="allproducts-link"><strong className="listname-link">
                             <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}> {this.state.product.name_ar}</font></font></strong><span className="pull-right text-muted">
                                 <font style={{ verticalAlign: 'inherit' }}><font style={{ verticalAlign: 'inherit' }}>Go to the campaign </font></font><span className="css-arrow right push-left"></span></span></a>
-
  
                         <div className="row half-margin">
-
                             <div className="col-xxs-12 col-xs-6">
                                 <div className="badge-item">
                                     <a data-toggle="popover" data-container="body" data-placement="bottom" type="button" data-html="true" href="/" id="kapi-info" className="add-popover" data-original-title="" title="">
@@ -1416,7 +1638,6 @@ export default class Product extends React.Component {
                                         <a id="ela-urun-detay-kapida-odeme-detay" href="/sss?k=19"><font style={{ verticalAlign: 'inherit' }}>
                                             <font style={{ verticalAlign: 'inherit' }}>Details ...</font></font></a>
                                     </div>
-
                                 </div>
                             </div>
                         </div>

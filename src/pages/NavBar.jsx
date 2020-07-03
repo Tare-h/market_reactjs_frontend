@@ -535,6 +535,14 @@ export default class NavBar extends React.Component {
               )}
             </font>
           </font>
+          {getLang() == "en" ? (
+            <font style={{ verticalAlign: "inherit" }}>
+              <br />
+              <font style={{ verticalAlign: "inherit" }}>Malls</font>
+            </font>
+          ) : (
+            <span></span>
+          )}
         </NavLink>
         <ul
           className="dropdown-menu"

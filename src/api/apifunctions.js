@@ -1,6 +1,6 @@
 import axios from 'axios';
 import $ from 'jquery';
-let api_server_url = 'http://malls-online.com/api/v6/back/public/';// 'http://127.0.0.1:8000';// //   'http://127.0.0.1:8000'; // 'http://malls-online.com/api/v4/back/public'; //'http://malls-online.com/api/malls_online/back/public/';// //'http://127.0.0.1:8000'; //
+let api_server_url = 'http://127.0.0.1:8000';//'http://malls-online.com/api/v6/back/public/'; //  //   'http://127.0.0.1:8000'; // 'http://malls-online.com/api/v4/back/public'; //'http://malls-online.com/api/malls_online/back/public/';// //'http://127.0.0.1:8000'; //
 export function getCategory() {
     try {
         $(".loadscr-container").show();
