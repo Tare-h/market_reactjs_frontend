@@ -54,6 +54,9 @@ export function getStart_search() {
   return false;
 }
 
+
+
+
 export function save_url_befor_register_or_login(url) {
   localStorage.setItem("subrl", url);
 }
@@ -139,7 +142,7 @@ export function get_currency() {
   return localStorage.getItem('currency') || null;
 }
 
-
+///////////////////////
 export function start_fetch_orders() {
   localStorage.setItem("orders", "started");
 
@@ -153,6 +156,21 @@ export function is_fetching_orders() {
   return true;
 
 }
+///////////////////////
+export function start_fetch_category_pagies() {
+  localStorage.setItem("category_pagies", "started");
+
+}
+export function end_fetch_category_pagies() {
+  localStorage.setItem("category_pagies", "ended");
+}
+export function is_fetching_category_pagies() {
+  const category_pagies = localStorage.getItem('category_pagies');
+  if (category_pagies == null || category_pagies == 'ended') { return false; }
+  return true;
+
+}
+///////////////////////
 export function start_fetch_orders_details() {
   localStorage.setItem("orders_details", "started");
 
@@ -288,8 +306,8 @@ export const postAuthData = (token, data, url) => {
   })
 
     .then(response => {
-      console.log(response.data);
-      console.log(response);
+      // console.log(response.data);
+      // console.log(response);
       return response;
     })
     .catch(error => {

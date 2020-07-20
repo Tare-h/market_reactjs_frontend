@@ -29,7 +29,8 @@ import Login from '../components/account/Login';
 import Siteinfo from '../pages/Siteinfo'
 import Signup from './Signup';
 import ProductsFav from "../pages/ProductsFav";
-import Profile from "../pages/Profile"
+import Profile from "../pages/Profile";
+import ChoosProductsCategory from "../pages/ChoosProductsCategory";
 import ProductsCarts from "../pages/ProductsCarts";
 export default class PublicPage extends React.Component {
     state = {
@@ -62,13 +63,13 @@ export default class PublicPage extends React.Component {
         apifunctions.getCategory4NavBar()
             .then(data => {
 
-                console.table(data);
+                // console.log(data);
 
                 this.setState({
 
                     category4NavBar: data.data.categories.sons
                 });
-                //console.table(data);
+                //// console.log(data);
             });
     }
     renderCategories = (routerProps) => {
@@ -281,7 +282,7 @@ export default class PublicPage extends React.Component {
 
                         <Route path="/signup" component={Signup} />
                         <Route path="/siteinfo" component={Siteinfo} />
-
+                        <Route path="/allcategories" component={ChoosProductsCategory} />
                         <Route path="/Products" component={Products} />
                         <Route path="/search" component={Products} />
                         <Route path="/Product" component={Product} />

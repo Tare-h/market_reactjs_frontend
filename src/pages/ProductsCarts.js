@@ -65,7 +65,7 @@ export default class ProductsCarts extends React.Component {
             this.setState({ isCartLoaded: false })
             // this.props.history.push('/profile');
         }).catch(error => {
-            //console.table(error);
+            //// console.log(error);
 
             if (error.response.status === 401) {
 
@@ -101,7 +101,7 @@ export default class ProductsCarts extends React.Component {
                 this.bodyParameters
 
             ).then(response => {
-                console.table(response);
+                // console.log(response);
                 this.setState({ carts: response.data.carts, isCartLoaded: false })
                 $(".loadscr-container").hide();
                 // this.setState({ user: response.data.user })
@@ -144,7 +144,7 @@ export default class ProductsCarts extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ carts: response.data.carts, isCartLoaded: true, is_still_fetching_cart_details: false })
 
                         $(".loadscr-container").hide();
@@ -189,7 +189,7 @@ export default class ProductsCarts extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ carts: response.data.carts, isCartLoaded: true, is_still_fetching_cart_details: false })
                         $(".loadscr-container").hide();
                         //setUserSession(response.data.token, response.data.user);

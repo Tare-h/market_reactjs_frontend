@@ -128,7 +128,7 @@ export default class NavBar extends React.Component {
               this.bodyParameters
             )
             .then((response) => {
-              console.table(response);
+              // console.log(response);
               $("#fav_count").attr(
                 "style",
                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -165,7 +165,7 @@ export default class NavBar extends React.Component {
                 this.bodyParameters
               )
               .then((response) => {
-                console.table(response);
+                // console.log(response);
 
                 $("#myorder_count").attr(
                   "style",
@@ -201,7 +201,7 @@ export default class NavBar extends React.Component {
               this.bodyParameters
             )
             .then((response) => {
-              console.table(response);
+              // console.log(response);
               $("#cart_count").attr(
                 "style",
                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -297,7 +297,7 @@ export default class NavBar extends React.Component {
               this.bodyParameters
             )
             .then((response) => {
-              console.table(response);
+              // console.log(response);
               $("#fav_count").attr(
                 "style",
                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -334,7 +334,7 @@ export default class NavBar extends React.Component {
                 this.bodyParameters
               )
               .then((response) => {
-                console.table(response);
+                // console.log(response);
 
                 $("#myorder_count").attr(
                   "style",
@@ -370,7 +370,7 @@ export default class NavBar extends React.Component {
               this.bodyParameters
             )
             .then((response) => {
-              console.table(response);
+              // console.log(response);
               $("#cart_count").attr(
                 "style",
                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -441,7 +441,7 @@ export default class NavBar extends React.Component {
                       this.bodyParameters
                     )
                     .then((response) => {
-                      console.table(response);
+                      // console.log(response);
                       $("#fav_count").attr(
                         "style",
                         "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -474,7 +474,7 @@ export default class NavBar extends React.Component {
                       this.bodyParameters
                     )
                     .then((response) => {
-                      console.table(response);
+                      // console.log(response);
                       $("#cart_count").attr(
                         "style",
                         "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -521,8 +521,8 @@ export default class NavBar extends React.Component {
       >
         <NavLink
           key={campaignCategoryObj.id}
-          to={`/products/${campaignCategoryObj.id}`}
-          id={`/products/${campaignCategoryObj.id}`}
+          to={`/allcategories/${campaignCategoryObj.category_name_en}-${campaignCategoryObj.id}`}
+          id={`/allcategories/${campaignCategoryObj.show_pages}`}
           data-hover="dropdown"
           className="dropdown-toggle js-mn-itm"
         >

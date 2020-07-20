@@ -67,7 +67,7 @@ export default class Products extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true });
                         $(".loadscr-container").hide();
                         //setUserSession(response.data.token, response.data.user);
@@ -103,7 +103,7 @@ export default class Products extends React.Component {
                     this.bodyParameters
 
                 ).then(response => {
-                    console.table(response);
+                    // console.log(response);
                     // this.setState({ user: response.data.user })
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
@@ -140,7 +140,7 @@ export default class Products extends React.Component {
                     this.bodyParameters
 
                 ).then(response => {
-                    console.table(response);
+                    // console.log(response);
                     this.setState({ Products: response.data, category: {} })
                     stop_search();
                     $(".loadscr-container").hide();
@@ -163,7 +163,7 @@ export default class Products extends React.Component {
                 });
                 $(".loadscr-container").show();
                 axios.get(apifunctions.api_server_url + '/api/products/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1)).then(response => {
-                    console.table(response.data.length);
+                    // console.log(response.data.length);
                     stop_search();
                     this.setState({ Products: response.data, category: {} })
                     $(".loadscr-container").hide();
@@ -178,7 +178,7 @@ export default class Products extends React.Component {
                 axios.get(apifunctions.api_server_url + '/api/category/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
                     .then(
                         response => {
-                            console.table(response);
+                            // console.log(response);
                             this.setState({ category: response.data.json, isCartLoaded: false })
 
                             // this.setState({ user: response.data.user })
@@ -217,7 +217,7 @@ export default class Products extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ Products: response.data.favorite_ads, is_fav_loaded: true });
                         $(".loadscr-container").hide();
                         //setUserSession(response.data.token, response.data.user);
@@ -254,7 +254,7 @@ export default class Products extends React.Component {
                     this.bodyParameters
 
                 ).then(response => {
-                    console.table(response);
+                    // console.log(response);
                     // this.setState({ user: response.data.user })
                     //setUserSession(response.data.token, response.data.user);
                     //setAuthLoading(false);
@@ -291,7 +291,7 @@ export default class Products extends React.Component {
                     this.bodyParameters
 
                 ).then(response => {
-                    console.table(response);
+                    // console.log(response);
                     this.setState({ Products: response.data, category: {} })
                     stop_search();
                     $(".loadscr-container").hide();
@@ -314,7 +314,7 @@ export default class Products extends React.Component {
                 });
                 $(".loadscr-container").show();
                 axios.get(apifunctions.api_server_url + '/api/products/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1)).then(response => {
-                    console.table(response.data.length);
+                    // console.log(response.data.length);
                     stop_search();
                     this.setState({ Products: response.data, category: {} })
                     $(".loadscr-container").hide();
@@ -329,7 +329,7 @@ export default class Products extends React.Component {
                 axios.get(apifunctions.api_server_url + '/api/category/' + + window.location.href.substring(window.location.href.lastIndexOf('/') + 1))
                     .then(
                         response => {
-                            console.table(response);
+                            // console.log(response);
                             this.setState({ category: response.data.json, isCartLoaded: false })
 
                             // this.setState({ user: response.data.user })

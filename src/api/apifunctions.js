@@ -1,10 +1,26 @@
 import axios from 'axios';
 import $ from 'jquery';
-let api_server_url = 'http://127.0.0.1:8000';//'http://malls-online.com/api/v6/back/public/'; //  //   'http://127.0.0.1:8000'; // 'http://malls-online.com/api/v4/back/public'; //'http://malls-online.com/api/malls_online/back/public/';// //'http://127.0.0.1:8000'; //
+let api_server_url = 'https://malls-online.com/api/v66/back/public'; //'http://127.0.0.1:8000';//  //   'http://127.0.0.1:8000'; // 'http://malls-online.com/api/v4/back/public'; //'http://malls-online.com/api/malls_online/back/public/';// //'http://127.0.0.1:8000'; //
 export function getCategory() {
     try {
         $(".loadscr-container").show();
         return axios.get(api_server_url + '/api/categories/home_page').then(response => {
+            $(".loadscr-container").hide();
+            return response;
+        }).catch(error => {
+
+            $(".loadscr-container").hide();
+
+        });
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+export function getCategory_by_page_name(page_name) {
+    try {
+        $(".loadscr-container").show();
+        return axios.get(api_server_url + '/api/categories/' + page_name).then(response => {
             $(".loadscr-container").hide();
             return response;
         }).catch(error => {
@@ -23,7 +39,7 @@ export function getCategory4NavBar() {
         $(".loadscr-container").show();
         return axios.get(api_server_url + '/api/categories_tree_sons/main_nav_bar').then(response => {
 
-            console.log(response);
+            // console.log(response);
 
             $(".loadscr-container").hide();
             return response;
@@ -37,6 +53,7 @@ export function getCategory4NavBar() {
         console.log(e);
     }
 }
+
 export function getJsonResourcesWithBarrer(link, token) {
 
     $.ajax({
@@ -56,5 +73,5 @@ export function getJsonResourcesWithBarrer(link, token) {
 }
 
 export default {
-    getCategory, getCategory4NavBar, api_server_url, getJsonResourcesWithBarrer
+    getCategory, getCategory4NavBar, api_server_url, getJsonResourcesWithBarrer, getCategory_by_page_name
 }

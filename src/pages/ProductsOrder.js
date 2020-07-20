@@ -73,7 +73,7 @@ export default class ProductsOrder extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ orders: response.data.orders, isOrdertLoaded: true })
 
                         // this.setState({ user: response.data.user })
@@ -118,7 +118,7 @@ export default class ProductsOrder extends React.Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
                         this.setState({ orders: response.data.orders, isOrdertLoaded: true })
                         // this.setState({ user: response.data.user })
                         $(".loadscr-container").hide();

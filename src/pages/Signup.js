@@ -212,7 +212,7 @@ function Signup(props) {
                             bodyParameters
                         )
                         .then((response) => {
-                            console.table(response);
+                            // console.log(response);
                             $("#fav_count").attr(
                                 "style",
                                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -241,7 +241,7 @@ function Signup(props) {
                         )
                         .then((response) => {
                             end_fetch_orders();
-                            console.table(response);
+                            // console.log(response);
 
                             $("#myorder_count").attr(
                                 "style",
@@ -271,7 +271,7 @@ function Signup(props) {
                             bodyParameters
                         )
                         .then((response) => {
-                            console.table(response);
+                            // console.log(response);
                             $("#cart_count").attr(
                                 "style",
                                 "background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);"
@@ -293,7 +293,7 @@ function Signup(props) {
 
             }).catch(error => {
                 $(".loadscr-container").hide();
-                //console.table(error);
+                //// console.log(error);
                 setLoading(false);
                 if (error.response.status === 401) {
                     setError(error.response.data.error);

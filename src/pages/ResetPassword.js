@@ -95,7 +95,7 @@ function ResetPassword(props) {
 
             }).catch(error => {
                 $(".loadscr-container").hide();
-                //console.table(error);
+                //// console.log(error);
                 setLoading(false);
                 try {
                     if (error.response.status === 401) {

@@ -12,7 +12,7 @@ import {
     currency_trans, currency_transing, calc_discount,
     removeUserSession,
 } from "../../Utils/Common";
-export default class ProductItemQuarterWidthexport extends React.Component {
+export default class ProductItemQuarterWidth extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

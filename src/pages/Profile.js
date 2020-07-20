@@ -125,7 +125,7 @@ class Profile extends Component {
         end_fetch_profile();
         // this.props.history.push('/profile');
       }).catch(error => {
-        //console.table(error);
+        //// console.log(error);
 
         if (error.response.status === 401) {
 
@@ -157,7 +157,7 @@ class Profile extends Component {
       this.bodyParameters
 
     ).then(response => {
-      console.table(response);
+      // console.log(response);
       this.setState({ user: response.data.user })
       //setUserSession(response.data.token, response.data.user);
       //setAuthLoading(false);

@@ -82,7 +82,7 @@ class Privatepages extends Component {
                         this.bodyParameters
                     )
                     .then((response) => {
-                        console.table(response);
+                        // console.log(response);
                         $("#fav_count").attr('style', 'background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);');
 
                         $("#fav_count").html(response.data.favorite_ads.length);
@@ -108,7 +108,7 @@ class Privatepages extends Component {
                     this.bodyParameters
                 )
                     .then((response) => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#myorder_count").attr('style', 'background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);');
 
@@ -135,7 +135,7 @@ class Privatepages extends Component {
                     this.bodyParameters
                 )
                     .then((response) => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#cart_count").attr('style', 'background-color: red;border-radius: 50%;padding: 5px;color: rgb(255, 255, 255);');
 

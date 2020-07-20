@@ -73,7 +73,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
 
                         $("#contecnt_text").html(response.data.data);
@@ -95,7 +95,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#contecnt_text").html(response.data.data);
                         $(".loadscr-container").hide();
@@ -121,7 +121,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
 
                         $("#contecnt_text").html(response.data.data);
@@ -143,7 +143,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#contecnt_text").html(response.data.data);
                         $(".loadscr-container").hide();
@@ -188,7 +188,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
 
                         $("#contecnt_text").html(response.data.data);
@@ -210,7 +210,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#contecnt_text").html(response.data.data);
                         $(".loadscr-container").hide();
@@ -236,7 +236,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
 
                         $("#contecnt_text").html(response.data.data);
@@ -258,7 +258,7 @@ class Siteinfo extends Component {
                         this.bodyParameters
 
                     ).then(response => {
-                        console.table(response);
+                        // console.log(response);
 
                         $("#contecnt_text").html(response.data.data);
                         $(".loadscr-container").hide();
