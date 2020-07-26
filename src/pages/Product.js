@@ -567,21 +567,31 @@ export default function Product(props) {
                                                                                 (photo, index222) => (
                                                                                     <li>
                                                                                         {getToken() && getUser().name == 'employee' ? (
-                                                                                            <>    <input type="text"
-                                                                                                name={`${'input_colored_prducts_img_path_' + index222}`}
-                                                                                                id={`${'input_colored_prducts_img_path_' + index222}`}
-                                                                                            />
+                                                                                            <form action={`${apifunctions.api_server_url
+                                                                                                + '/change_product_photo_id'}`} method="post" >
+                                                                                                <input type="hidden"
+                                                                                                    name='product_photo_id'
+                                                                                                    value={`${photo.id}`}
+                                                                                                />
+                                                                                                <input type="hidden"
+                                                                                                    name={`${'input_colored_prducts_img_path_' + index222}`}
+                                                                                                    id={`${'input_colored_prducts_img_path_' + index222}`}
+                                                                                                />
                                                                                                 <img
                                                                                                     name={`${'img_' + index222}`}
-                                                                                                    id={`${'img_' + index222}`} style={{ height: '300px' }} />
+                                                                                                    id={`${'img_' + index222}`} style={{ height: '100px' }} />
                                                                                                 <iframe
                                                                                                     src={`${apifunctions.api_server_url
                                                                                                         + '/image-upload?target_img=img_' + index222
                                                                                                         + '&target_input=input_colored_prducts_img_path_' + index222
-                                                                                                        + '&target_img_api=apifunctions.api_server_url'
+                                                                                                        + '&target_img_api=' + apifunctions.api_server_url
                                                                                                         }`}
                                                                                                     width="270px" height="70px"></iframe>
-                                                                                            </>
+                                                                                                <input type="submit"
+                                                                                                    value="save" name="save"
+                                                                                                />
+                                                                                            </form>
+
                                                                                         ) : (<></>)}
                                                                                         <img
                                                                                             id={index222}

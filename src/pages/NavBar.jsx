@@ -801,11 +801,15 @@ export default class NavBar extends React.Component {
                                 title={trans("طلباتي", "my orders")}
                               ></i>
                               <span id="myorder_count">
-                                <div className="mloader">
-                                  <div className="bnc bnc1"></div>
-                                  <div className="bnc bnc2"></div>
-                                  <div className="bnc bnc3"></div>
-                                </div>
+                                {getToken() && getUser().name != "employee" ? (
+                                  <div className="mloader">
+                                    <div className="bnc bnc1"></div>
+                                    <div className="bnc bnc2"></div>
+                                    <div className="bnc bnc3"></div>
+                                  </div>
+                                ) : (
+                                  <></>
+                                )}{" "}
                               </span>
                             </font>
                           </font>
@@ -845,13 +849,17 @@ export default class NavBar extends React.Component {
                               className="fa fa-shopping-cart"
                               title={trans("سلتي", "my cart")}
                             ></i>
-
                             <span id="cart_count">
-                              <div className="mloader">
-                                <div className="bnc bnc1"></div>
-                                <div className="bnc bnc2"></div>
-                                <div className="bnc bnc3"></div>
-                              </div>
+                              {" "}
+                              {getToken() && getUser().name != "employee" ? (
+                                <div className="mloader">
+                                  <div className="bnc bnc1"></div>
+                                  <div className="bnc bnc2"></div>
+                                  <div className="bnc bnc3"></div>
+                                </div>
+                              ) : (
+                                <></>
+                              )}{" "}
                             </span>
                           </font>
                         </font>
@@ -886,11 +894,15 @@ export default class NavBar extends React.Component {
                               title={trans("مفضلتي", "my favorite")}
                             ></i>
                             <span id="fav_count">
-                              <div className="mloader">
-                                <div className="bnc bnc1"></div>
-                                <div className="bnc bnc2"></div>
-                                <div className="bnc bnc3"></div>
-                              </div>
+                              {getToken() && getUser().name != "employee" ? (
+                                <div className="mloader">
+                                  <div className="bnc bnc1"></div>
+                                  <div className="bnc bnc2"></div>
+                                  <div className="bnc bnc3"></div>
+                                </div>
+                              ) : (
+                                <></>
+                              )}{" "}
                             </span>
                           </font>
                         </font>
